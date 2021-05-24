@@ -26,7 +26,7 @@ public class RabbitMQController {
 		
 		try {
 			rabbitTemplate.convertAndSend(topicExchangeName,
-					queueName, new Gson().toJson(jobBean));
+					queueName, jobBean);
 			
 			return ResponseEntity.ok(jobBean);
 		}catch (Exception e) {

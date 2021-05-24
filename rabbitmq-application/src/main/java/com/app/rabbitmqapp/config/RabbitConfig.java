@@ -1,6 +1,7 @@
 package com.app.rabbitmqapp.config;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -26,7 +27,7 @@ import com.app.rabbitmqapp.service.MessageHandler;
 @PropertySource("classpath:application.properties")
 public class RabbitConfig {
 
-	private static Logger LOGGER = Logger.getLogger(RabbitConfig.class);
+	private static Logger log = LogManager.getLogger(RabbitConfig.class);
 
 	public final static String queueName = "message-queue";
 	
@@ -47,6 +48,9 @@ public class RabbitConfig {
 		CachingConnectionFactory connectionFactory = new CachingConnectionFactory(RABBIT_HOST);
 		connectionFactory.setUsername(RABBIT_USERNAME);
 		connectionFactory.setPassword(RABBIT_PASSWORD);
+		
+		log.info(RABBIT_USERNAME + "@" + RABBIT_HOST);
+		
 		return connectionFactory;
 	}
 
@@ -92,9 +96,9 @@ public class RabbitConfig {
 		container.setQueueNames(queueName);
 		container.setMessageListener(listenerAdapter);
 
-		LOGGER.info("Rabbit host : " + connectionFactory.getHost());
-		LOGGER.info("Rabbit host : " + connectionFactory.getPort());
-		LOGGER.info("Rabbit user name : " + connectionFactory.getUsername());
+		log.info("Rabbit host : " + connectionFactory.getHost());
+		log.info("Rabbit host : " + connectionFactory.getPort());
+		log.info("Rabbit user name : " + connectionFactory.getUsername());
 
 		return container;
 	}
