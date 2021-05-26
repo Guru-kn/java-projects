@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rabbitmq-app
+  template:
+    metadata:
+      labels:
+        app: rabbitmq-app
+        visualize: "true"
+    spec:
+      containers:
+      - name: rabbitmq-app-pod
+        image: gpdockup/rabbitmq-app:v2
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    visualize: "true"
+  name: rabbitmq-app-service
+spec:
+  selector:
+    app: rabbitmq-app
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP
