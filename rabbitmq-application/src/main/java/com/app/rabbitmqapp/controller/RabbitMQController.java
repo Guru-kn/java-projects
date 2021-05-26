@@ -1,4 +1,4 @@
-package com.app.rabbitmqapp.Controller;
+package com.app.rabbitmqapp.controller;
 
 import static com.app.rabbitmqapp.config.RabbitConfig.queueName;
 import static com.app.rabbitmqapp.config.RabbitConfig.topicExchangeName;

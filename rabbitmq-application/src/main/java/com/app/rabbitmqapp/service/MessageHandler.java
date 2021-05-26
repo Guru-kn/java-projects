@@ -33,8 +33,8 @@ public class MessageHandler implements MessageListener{
 				}
 			}
 		};
-
+		
 		thread.start();
-		log.info(" MESSAGE RECEIVED ");
+		log.info("MESSAGE RECEIVED ");
 	}
 }
