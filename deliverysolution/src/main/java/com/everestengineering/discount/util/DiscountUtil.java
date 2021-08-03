@@ -1,4 +1,4 @@
-package com.everestengineering.util;
+package com.everestengineering.discount.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.everestengineering.constant.DiscountConstant.CouponNames;
-import com.everestengineering.constant.DiscountConstant.DiscountMeasure;
-import com.everestengineering.constant.DiscountConstant.DiscountType;
-import com.everestengineering.constant.DiscountConstant.RangeMeasure;
-import com.everestengineering.model.DiscountCoupon;
-import com.everestengineering.model.DiscountCriteria;
-import com.everestengineering.model.DiscountResponse;
+import com.everestengineering.discount.constant.DiscountConstant.CouponNames;
+import com.everestengineering.discount.constant.DiscountConstant.DiscountMeasure;
+import com.everestengineering.discount.constant.DiscountConstant.DiscountType;
+import com.everestengineering.discount.constant.DiscountConstant.RangeMeasure;
+import com.everestengineering.discount.model.DiscountCoupon;
+import com.everestengineering.discount.model.DiscountCriteria;
+import com.everestengineering.discount.model.DiscountResponse;
 
 public class DiscountUtil {
 

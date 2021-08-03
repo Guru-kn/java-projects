@@ -1,13 +1,13 @@
-package com.everestengineering;
+package com.everestengineering.discount;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
-import com.everestengineering.constant.CostConstants;
-import com.everestengineering.model.OrderResponse;
-import com.everestengineering.util.ValidationUtil;
+import com.everestengineering.discount.constant.CostConstants;
+import com.everestengineering.discount.model.OrderResponse;
+import com.everestengineering.discount.util.ValidationUtil;
 
 public class ValidationTest {
 

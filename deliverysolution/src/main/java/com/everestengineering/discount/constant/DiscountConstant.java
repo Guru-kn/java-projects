@@ -1,4 +1,4 @@
-package com.everestengineering.constant;
+package com.everestengineering.discount.constant;
 
 public interface DiscountConstant {
 	

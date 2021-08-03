@@ -1,13 +1,13 @@
-package com.everestengineering.service;
+package com.everestengineering.discount.service;
 
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.everestengineering.model.DiscountCoupon;
-import com.everestengineering.model.DiscountCriteria;
-import com.everestengineering.model.DiscountResponse;
-import com.everestengineering.util.DiscountUtil;
+import com.everestengineering.discount.model.DiscountCoupon;
+import com.everestengineering.discount.model.DiscountCriteria;
+import com.everestengineering.discount.model.DiscountResponse;
+import com.everestengineering.discount.util.DiscountUtil;
 import com.google.gson.Gson;
 
 public class DiscountService {

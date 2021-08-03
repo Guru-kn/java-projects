@@ -1,6 +1,6 @@
-package com.everestengineering;
+package com.everestengineering.discount;
 
-import com.everestengineering.service.CostService;
+import com.everestengineering.discount.service.CostService;
 
 public class DiscountMainApp {
 	

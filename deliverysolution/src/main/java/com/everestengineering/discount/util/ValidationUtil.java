@@ -1,12 +1,9 @@
-package com.everestengineering.util;
+package com.everestengineering.discount.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.everestengineering.constant.CostConstants;
-import com.everestengineering.constant.DiscountConstant;
-import com.everestengineering.constant.ValidationConstant;
-import com.everestengineering.model.OrderResponse;
+import com.everestengineering.discount.constant.CostConstants;
+import com.everestengineering.discount.constant.DiscountConstant;
+import com.everestengineering.discount.constant.ValidationConstant;
+import com.everestengineering.discount.model.OrderResponse;
 
 public class ValidationUtil {
 

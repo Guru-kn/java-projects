@@ -1,4 +1,4 @@
-package com.everestengineering.model;
+package com.everestengineering.discount.model;
 
 import java.util.List;
 

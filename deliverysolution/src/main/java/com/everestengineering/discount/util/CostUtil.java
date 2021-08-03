@@ -1,8 +1,8 @@
-package com.everestengineering.util;
+package com.everestengineering.discount.util;
 
 import org.apache.log4j.Logger;
 
-import com.everestengineering.constant.CostConstants;
+import com.everestengineering.discount.constant.CostConstants;
 
 public class CostUtil {
 

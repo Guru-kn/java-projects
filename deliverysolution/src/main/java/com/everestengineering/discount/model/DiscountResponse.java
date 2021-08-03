@@ -1,11 +1,11 @@
-package com.everestengineering.model;
+package com.everestengineering.discount.model;
+
+import com.everestengineering.discount.constant.DiscountConstant.RangeMeasure;
+import com.everestengineering.discount.util.DiscountUtil;
 
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import static com.everestengineering.constant.DiscountConstant.*;
-
-import com.everestengineering.util.DiscountUtil;
 
 @Data
 @Getter

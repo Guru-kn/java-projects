@@ -1,14 +1,14 @@
-package com.everestengineering;
+package com.everestengineering.discount;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
-import com.everestengineering.constant.DiscountConstant;
-import com.everestengineering.constant.ValidationConstant;
-import com.everestengineering.model.DiscountResponse;
-import com.everestengineering.service.DiscountService;
+import com.everestengineering.discount.constant.DiscountConstant;
+import com.everestengineering.discount.constant.ValidationConstant;
+import com.everestengineering.discount.model.DiscountResponse;
+import com.everestengineering.discount.service.DiscountService;
 
 public class DiscountCalculationTest {
 	

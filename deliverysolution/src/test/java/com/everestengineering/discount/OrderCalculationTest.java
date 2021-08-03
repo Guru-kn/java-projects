@@ -1,11 +1,11 @@
-package com.everestengineering;
+package com.everestengineering.discount;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
-import com.everestengineering.util.CostUtil;
+import com.everestengineering.discount.util.CostUtil;
 
 public class OrderCalculationTest {
 	

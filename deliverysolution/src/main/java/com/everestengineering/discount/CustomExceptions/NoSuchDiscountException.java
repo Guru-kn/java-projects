@@ -1,4 +1,4 @@
-package com.everestengineering.CustomExceptions;
+package com.everestengineering.discount.CustomExceptions;
 
 public class NoSuchDiscountException extends Exception{
 	

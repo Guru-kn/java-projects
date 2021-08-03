@@ -1,15 +1,14 @@
-package com.everestengineering.service;
+package com.everestengineering.discount.service;
 
-import java.util.List;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 
-import com.everestengineering.model.DiscountResponse;
-import com.everestengineering.model.OrderResponse;
-import com.everestengineering.util.CostUtil;
-import com.everestengineering.util.ValidationUtil;
+import com.everestengineering.discount.model.DiscountResponse;
+import com.everestengineering.discount.model.OrderResponse;
+import com.everestengineering.discount.util.CostUtil;
+import com.everestengineering.discount.util.ValidationUtil;
 import com.google.gson.Gson;
 
 public class CostService {
