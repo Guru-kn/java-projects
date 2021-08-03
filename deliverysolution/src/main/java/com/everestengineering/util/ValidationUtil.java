@@ -95,7 +95,7 @@ public class ValidationUtil {
 		return orderResponse;
 	}
 
-	OrderResponse validateParseDouble(String strToParse, String parameterName, OrderResponse orderResponse) {
+	public OrderResponse validateParseDouble(String strToParse, String parameterName, OrderResponse orderResponse) {
 		try {
 			double val = Double.valueOf(strToParse);
 			
@@ -117,7 +117,7 @@ public class ValidationUtil {
 		return orderResponse;
 	}
 
-	OrderResponse validateString(String strToValidate, String parameterName, OrderResponse orderResponse) {
+	public OrderResponse validateString(String strToValidate, String parameterName, OrderResponse orderResponse) {
 		if (null == strToValidate || strToValidate.trim().length() == 0) {
 			orderResponse.setValid(false);
 			orderResponse.setValidationMessage("Entered " + parameterName + " is null or empty");
