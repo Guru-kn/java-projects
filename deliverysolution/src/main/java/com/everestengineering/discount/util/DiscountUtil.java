@@ -39,6 +39,9 @@ public class DiscountUtil {
 	}
 	
 	public static Map<String, DiscountCoupon> getDiscountCoupons() {
+		if(null == discountCoupons) {
+			addDiscountCoupons(); // this needs to either in cache or driven from DB
+		}
 		return discountCoupons;
 	}
 

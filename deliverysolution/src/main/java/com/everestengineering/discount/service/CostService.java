@@ -26,7 +26,7 @@ public class CostService {
 		return costService;
 	}
 	
-	public void calculateTotalCostOfDelivery(String baseDlvryCostNoOfPackages) {
+	public String[] calculateTotalCostOfDelivery(String baseDlvryCostNoOfPackages) {
 		
 		// input format
 		// base_delivery_cost no_of_packges
@@ -39,18 +39,20 @@ public class CostService {
 		OrderResponse orderResponse = ValidationUtil.getInstance().validateBaseDeliveryCostAndNoOfPackages(baseDlvryCostNoOfPackages, new OrderResponse());
 		
 		if(!orderResponse.isValid()) {
-			System.out.println("Validation failed " + orderResponse.getValidationMessage());
-			return;
+			logger.info("Validation failed " + orderResponse.getValidationMessage());
+			return null;
 		}
 
 		String[] baseDlvryCostNoOfPackagesArr = baseDlvryCostNoOfPackages.split(" ");
 		Scanner input = null;
+		String[] pkgIdPkgWeightInKgDistInKmOffCode = null;
+		String[] packageOutputWithDiscountAndCost = null;
 		
 		try {
 			double baseDeliveryCost = Double.valueOf(baseDlvryCostNoOfPackagesArr[0]);
 			int numberOfPackages = Integer.valueOf(baseDlvryCostNoOfPackagesArr[1]);
 			
-			String[] pkgIdPkgWeightInKgDistInKmOffCode = new String[numberOfPackages];
+			pkgIdPkgWeightInKgDistInKmOffCode = new String[numberOfPackages];
 			
 			input = new Scanner(System.in);
 			logger.info("Enter the details of " + numberOfPackages + " packages now");
@@ -59,12 +61,14 @@ public class CostService {
 	        	pkgIdPkgWeightInKgDistInKmOffCode[i] = input.nextLine();
 	        }
 	        
+	        packageOutputWithDiscountAndCost = new String[numberOfPackages];
 	        
-	        
-	        for(String pacakgeDetails: pkgIdPkgWeightInKgDistInKmOffCode) {
+	        for(String packageDetails: pkgIdPkgWeightInKgDistInKmOffCode) {
+	        	
+	        	int index = 0;
 	        	
 	        	orderResponse = ValidationUtil.getInstance().
-		        		validatePackageIdWeightInKgDistInKmAndOffCode(pacakgeDetails,
+		        		validatePackageIdWeightInKgDistInKmAndOffCode(packageDetails,
 		        				orderResponse);
 		        
 		        System.out.println(new Gson().toJson(orderResponse));
@@ -75,7 +79,7 @@ public class CostService {
 					continue;
 				}
 
-	    		String[] pkgIdPkgWeightInKgDistInKmOffCodeArr = pacakgeDetails.split(" ");
+	    		String[] pkgIdPkgWeightInKgDistInKmOffCodeArr = packageDetails.split(" ");
 
 	    		String packageId = null;
 	    		double weightInKg = 0;
@@ -103,8 +107,12 @@ public class CostService {
 		    		
 		    		double totalDeliveryCost = discountResponse.getBaseCost() - discountResponse.getTotalDiscountInAmount();
 		    		
-		    		logger.info(packageId + " " + discountResponse.getTotalDiscountInAmount() + " " +
-		    				totalDeliveryCost);
+		    		String pacakgeDetailWithDiscountAndCost = packageId + " " +
+		    		discountResponse.getTotalDiscountInAmount() + " " + totalDeliveryCost;
+		    		
+		    		logger.info(pacakgeDetailWithDiscountAndCost);
+		    		
+		    		packageOutputWithDiscountAndCost[index] = pacakgeDetailWithDiscountAndCost;
 		    		
 		    		logger.info("----------------------------END OF O/P---------------------------------------");
 				}
@@ -125,5 +133,6 @@ public class CostService {
 				}
 			}
 		}
+		return packageOutputWithDiscountAndCost;
 	}
 }
