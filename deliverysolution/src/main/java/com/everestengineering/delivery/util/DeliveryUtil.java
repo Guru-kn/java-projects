@@ -113,6 +113,7 @@ public class DeliveryUtil {
 		System.out.println(packageWithMaxSumAndIndexOfMaxSumList);
 		
 		// send packageWithMaxSumAndIndexOfMaxSumList to method and 
+		// find if we have same maxweights, if yes check which has max packages
 		// calculate distance when we have same number of packages and same weight
 		// else pick max number of packages
 		// else max weight package details
