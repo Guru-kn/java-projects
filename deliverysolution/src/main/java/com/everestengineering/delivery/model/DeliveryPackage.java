@@ -12,6 +12,7 @@ public class DeliveryPackage {
 	private String packageId;
 	private Double weightInKg;
 	private Double distanceInKms;
+	private String timeTakenToDeliverInHrs;
 	private DiscountCoupon discountCoupon;
 	
 	public DeliveryPackage() {

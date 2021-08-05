@@ -5,14 +5,16 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
 import com.everestengineering.delivery.constant.DeliveryConstant;
 import com.everestengineering.delivery.model.DeliveryPackage;
 import com.everestengineering.delivery.model.PackageResponse;
-import com.google.gson.Gson;
 
 public class DeliveryUtil {
 
@@ -48,7 +50,9 @@ public class DeliveryUtil {
 		}
 
 		PackageResponse packageResponse = new PackageResponse();
-		packageResponse.setIndexOfMaxSum(Arrays.stream(indexesUsedToAdd).filter(x -> x >= 0).toArray());
+		indexesUsedToAdd = Arrays.stream(indexesUsedToAdd).filter(x -> x >= 0).toArray();  
+		packageResponse.setIndexOfMaxSum(indexesUsedToAdd);
+		packageResponse.setNumberOfPackages(indexesUsedToAdd.length);
 		packageResponse.setMaxWeight(res);
 
 		return packageResponse;
@@ -77,6 +81,27 @@ public class DeliveryUtil {
 		bd = bd.setScale(2, RoundingMode.FLOOR);
 		return bd.doubleValue();
 	}
+	
+	public static List<PackageResponse> checkAndSelectSuitablePackageToAssign(
+			List<PackageResponse> packageWithMaxSumAndIndexOfMaxSumList) {
+		
+		List<PackageResponse> finalListWithMaxWeights = packageWithMaxSumAndIndexOfMaxSumList.stream()
+				.filter(o -> o.getMaxWeight().equals(packageWithMaxSumAndIndexOfMaxSumList.get(0).getMaxWeight()))
+				.collect(Collectors.toList());
+		
+		System.out.println(finalListWithMaxWeights);
+		
+		if(finalListWithMaxWeights.size() > 1) {
+			
+			// compare all the packages distance and then choose the package with nearest distance
+		}
+		
+		return finalListWithMaxWeights;
+	}
+	
+	public static void assignPackagetoVehicle() {
+		
+	}
 
 	public static void main(String[] args) {
 
@@ -88,6 +113,12 @@ public class DeliveryUtil {
 		packageList.add("PKG3 175 100 OFFR003");
 		packageList.add("PKG4 110 60 OFFR002");
 		packageList.add("PKG5 155 95 NA");
+		
+//		packageList.add("PKG1 75 30 OFR001");
+//		packageList.add("PKG2 75 125 OFFR0008");
+//		packageList.add("PKG3 50 100 OFFR003");
+//		packageList.add("PKG4 75 60 OFFR002");
+//		packageList.add("PKG5 25 95 NA");
 
 		List<DeliveryPackage> deliveryPackageList = readPackageDetails(packageList);
 		System.out.println(deliveryPackageList);
@@ -99,24 +130,30 @@ public class DeliveryUtil {
 		List<PackageResponse> packageWithMaxSumAndIndexOfMaxSumList = new ArrayList<PackageResponse>();
 		for (int i = 0; i < packageWeights.length; i++) {
 			packageResponse = findHeavierPackages(packageWeights, packageWeights.length, i);
-			System.out.println(new Gson().toJson(packageResponse));
 			packageWithMaxSumAndIndexOfMaxSumList.add(packageResponse);
 		}
 
-		Collections.sort(packageWithMaxSumAndIndexOfMaxSumList, new MaxWeightComparator());
+		// Collections.sort(packageWithMaxSumAndIndexOfMaxSumList, new MaxWeightComparator());
 
 		// String[] packageWithCostAndDiscount =
 		// CostService.getInstance().calculateTotalCostOfDelivery("100 5");
+		
+		Collections.sort(packageWithMaxSumAndIndexOfMaxSumList, 
+				Comparator.comparing(PackageResponse::getMaxWeight).reversed()
+	            .thenComparing(PackageResponse::getNumberOfPackages));
 
 		// 50, 75, 175, 110, 155 -> 50, 75, 110, 155, 175
-
-		System.out.println(packageWithMaxSumAndIndexOfMaxSumList);
 		
 		// send packageWithMaxSumAndIndexOfMaxSumList to method and 
 		// find if we have same maxweights, if yes check which has max packages
 		// calculate distance when we have same number of packages and same weight
 		// else pick max number of packages
 		// else max weight package details
+		
+		packageWithMaxSumAndIndexOfMaxSumList = 
+				checkAndSelectSuitablePackageToAssign(packageWithMaxSumAndIndexOfMaxSumList);
+		
+		System.out.println(packageWithMaxSumAndIndexOfMaxSumList);
 		
 		double timeInHrs = calculateDeliveryTime(60);
 	}

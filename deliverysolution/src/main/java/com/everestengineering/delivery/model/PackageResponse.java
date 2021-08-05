@@ -7,4 +7,5 @@ public class PackageResponse {
 	
 	private Integer maxWeight;
 	private int[] indexOfMaxSum;
+	private Integer numberOfPackages;
 }
