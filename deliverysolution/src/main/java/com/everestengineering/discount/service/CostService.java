@@ -98,14 +98,14 @@ public class CostService {
 	    		}catch (Exception e) {
 	    			logger.log(Priority.ERROR, e.getMessage());
 	    		}finally {
-	    			double baseTotalCost = CostUtil.getInstance().calculateBaseCost(baseDeliveryCost, weightInKg, distanceInKms);
+	    			double baseTotalCost = CostUtil.getInstance().calculateTotalCost(baseDeliveryCost, weightInKg, distanceInKms);
 
 		    		DiscountResponse discountResponse = DiscountService.getInstance().calculateDiscountByCouponCode(offerCode, baseTotalCost,
 		    				weightInKg, distanceInKms);
 		    		
 		    		logger.info(new Gson().toJson(discountResponse));
 		    		
-		    		double totalDeliveryCost = discountResponse.getBaseCost() - discountResponse.getTotalDiscountInAmount();
+		    		double totalDeliveryCost = discountResponse.getTotalCost() - discountResponse.getTotalDiscountInAmount();
 		    		
 		    		String pacakgeDetailWithDiscountAndCost = packageId + " " +
 		    		discountResponse.getTotalDiscountInAmount() + " " + totalDeliveryCost;

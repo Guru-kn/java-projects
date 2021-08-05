@@ -13,9 +13,9 @@ public class OrderCalculationTest {
 
 	@Test
 	public void testBaseCostCalculation() {
-		assertEquals(175.0, CostUtil.getInstance().calculateBaseCost(100, 5, 5));
-		assertEquals(1045.0, CostUtil.getInstance().calculateBaseCost(500, 15.5, 78));
-		assertEquals(2256.575, CostUtil.getInstance().calculateBaseCost(500, 150.23, 50.855));
-		assertEquals(8250, CostUtil.getInstance().calculateBaseCost(500, 500, 550));
+		assertEquals(175.0, CostUtil.getInstance().calculateTotalCost(100, 5, 5));
+		assertEquals(1045.0, CostUtil.getInstance().calculateTotalCost(500, 15.5, 78));
+		assertEquals(2256.575, CostUtil.getInstance().calculateTotalCost(500, 150.23, 50.855));
+		assertEquals(8250, CostUtil.getInstance().calculateTotalCost(500, 500, 550));
 	}
 }

@@ -15,7 +15,7 @@ public class DiscountResponse {
 	private boolean distanceCriteria;
 	private boolean weightCriteria;
 	private String criteriaMessage;
-	private double baseCost;
+	private double totalCost;
 	private double totalDiscountInAmount;
 	private String couponCode;
 	private RangeMeasure rangeMeasure;
@@ -23,10 +23,11 @@ public class DiscountResponse {
 	private double totalWeight;
 	private double totalDistance;
 	private DiscountCriteria discountCriteria;
+	private Double finalDeliveryCost;
 	
 	public DiscountResponse(boolean couponApplied, String couponCode, 
 			DiscountCriteria discountCriteria,
-			boolean distanceCriteria, boolean weightCriteria,double baseCost,
+			boolean distanceCriteria, boolean weightCriteria,double totalCost,
 			double totalDiscountInAmount, double totalWeight, double totalDistance){
 		
 		this.couponApplied = couponApplied;
@@ -35,7 +36,7 @@ public class DiscountResponse {
 				discountCriteria.getRangeMeasure() : RangeMeasure.INVALID;
 		this.distanceCriteria = distanceCriteria;
 		this.weightCriteria = weightCriteria;
-		this.baseCost = baseCost;
+		this.totalCost = totalCost;
 		this.totalDiscountInAmount = totalDiscountInAmount;
 		this.totalWeight = totalWeight;
 		this.totalDistance = totalDistance;

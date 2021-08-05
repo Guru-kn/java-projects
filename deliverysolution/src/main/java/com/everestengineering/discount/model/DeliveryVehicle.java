@@ -12,7 +12,7 @@ public class DeliveryVehicle {
 	
 	private String vId;
 	private Boolean isAvailable;
-	private Integer nextAvailableInHrs;
+	private Double nextAvailableInHrs;
 	private Double maxSpeedInKms = DeliveryConstant.MAX_SPEED_PER_HR_IN_KMS;
 	private Double maxLoadTakenInKgs = DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS;
 	private List<DeliveryPackage> deliveryPackages;
@@ -21,7 +21,7 @@ public class DeliveryVehicle {
 		
 	}
 	
-	public DeliveryVehicle(String vId, Boolean isAvailable, Integer nextAvailableInHrs) {
+	public DeliveryVehicle(String vId, Boolean isAvailable, Double nextAvailableInHrs) {
 		
 		this.vId = vId;
 		this.isAvailable = isAvailable;
