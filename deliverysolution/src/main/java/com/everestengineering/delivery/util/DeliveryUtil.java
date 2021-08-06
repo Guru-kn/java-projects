@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -17,12 +19,11 @@ import org.apache.log4j.Logger;
 import com.everestengineering.delivery.constant.DeliveryConstant;
 import com.everestengineering.delivery.model.DeliveryPackage;
 import com.everestengineering.delivery.model.PackageResponse;
-import com.everestengineering.discount.constant.CostConstants;
-import com.everestengineering.discount.constant.DiscountConstant;
 import com.everestengineering.discount.constant.ValidationConstant;
 import com.everestengineering.discount.model.DeliveryVehicle;
 import com.everestengineering.discount.model.DiscountResponse;
 import com.everestengineering.discount.util.CostUtil;
+import com.google.gson.Gson;
 
 public class DeliveryUtil {
 
@@ -97,8 +98,6 @@ public class DeliveryUtil {
 				.filter(o -> o.getMaxWeight().equals(packageWithMaxSumAndIndexOfMaxSumList.get(0).getMaxWeight()))
 				.collect(Collectors.toList());
 
-		System.out.println(finalListWithMaxWeights);
-
 		if (finalListWithMaxWeights.size() > 1) {
 
 			// compare all the packages distance and then choose the package with nearest
@@ -107,21 +106,53 @@ public class DeliveryUtil {
 
 		return finalListWithMaxWeights;
 	}
+	
+	public static Map<String, DeliveryVehicle> getNextAvailableVehicleInTransit(Map<String, DeliveryVehicle> vehiclesInTransit) {
+		
+		Map<String, Double> mapOfVhcleAndNxtAvalbleTime = vehiclesInTransit.entrySet()
+		        .stream()
+		        .collect(Collectors.toMap(Map.Entry::getKey,
+		                                  e -> new Double(e.getValue().getNextAvailableInHrs())));
+		
+		Map<String, Double> sortedByCount = mapOfVhcleAndNxtAvalbleTime.entrySet()
+                .stream()
+                .sorted((Map.Entry.<String, Double>comparingByValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		
+		System.out.println("sortedByCount " + sortedByCount);
+		
+		Map<String, DeliveryVehicle> newMap = vehiclesInTransit.entrySet()
+		.stream()
+		.filter(x -> x.getKey().equals(sortedByCount.entrySet().iterator().next().getKey()))
+		.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		
+		return newMap;
+	}
 
-	public static void assignPackagetoVehicle(PackageResponse packageWithMaxSumAndIndexOfMaxSumList,
-			List<DeliveryPackage> masterPackageList) {
+	public static Map<String, DeliveryVehicle> assignPackagetoVehicle(
+			PackageResponse packageWithMaxSumAndIndexOfMaxSumList, List<DeliveryPackage> masterPackageList) {
 
 		// get available vehicle fleets
 		Map<String, DeliveryVehicle> availableVehicleFleets = VehicleUtil.getAvailableVehicleFleets();
-		logger.info("Available Vehicles: " + availableVehicleFleets);
+		
+		if(availableVehicleFleets.size() == 0) {
+			availableVehicleFleets = getNextAvailableVehicleInTransit(VehicleUtil.getVehiclesInTransit());
+			logger.info("availableVehicleFleets " + new Gson().toJson(availableVehicleFleets));
+		}
 
 		int[] arrOfPackagesWhichCanBeAssigned = packageWithMaxSumAndIndexOfMaxSumList.getIndexOfMaxSum();
-
+		
+		DeliveryVehicle vehicleAvlbleForDelivery = availableVehicleFleets.entrySet().iterator().next().getValue();
 		// get packages ready for delivery
-		List<DeliveryPackage> listOfPckgRdyForDlvry = new ArrayList<DeliveryPackage>();
+		List<DeliveryPackage> listOfPckgRdyForDlvry = vehicleAvlbleForDelivery.getDeliveryPackages();
+		
+		if(null == listOfPckgRdyForDlvry) {
+			listOfPckgRdyForDlvry = new ArrayList<DeliveryPackage>();
+		}
+		
 		DeliveryPackage packageReadyForDelivery = null;
 		DiscountResponse discountResponse = null;
-		double totalTimeOfDeliveryOfSingleTrip = 0;
+		double totalTimeOfDeliveryOfPckg = 0;
 
 		for (int indxInMasterList : arrOfPackagesWhichCanBeAssigned) {
 			packageReadyForDelivery = masterPackageList.get(indxInMasterList);
@@ -133,16 +164,20 @@ public class DeliveryUtil {
 						packageReadyForDelivery.getDiscountCoupon() != null
 								? packageReadyForDelivery.getDiscountCoupon().getCouponCode()
 								: ValidationConstant.INVALID_INPUT);
+				
 				double totTimeToDeliverPckge = calculateDeliveryTime(packageReadyForDelivery.getDistanceInKms());
-				packageReadyForDelivery
-						.setTimeTakenToDeliverInHrs(totTimeToDeliverPckge);
-				totalTimeOfDeliveryOfSingleTrip = totalTimeOfDeliveryOfSingleTrip == 0 ?  (totalTimeOfDeliveryOfSingleTrip + totTimeToDeliverPckge) : Math.max(totalTimeOfDeliveryOfSingleTrip, totTimeToDeliverPckge);
+				
+				packageReadyForDelivery.setTimeTakenToDeliverInHrs(vehicleAvlbleForDelivery.getNextAvailableInHrs() + totTimeToDeliverPckge);
+				
+				totalTimeOfDeliveryOfPckg = totalTimeOfDeliveryOfPckg == 0
+						? (totalTimeOfDeliveryOfPckg + totTimeToDeliverPckge)
+						: Math.max(totalTimeOfDeliveryOfPckg, totTimeToDeliverPckge);
 				packageReadyForDelivery.setDiscountResponse(discountResponse);
 				listOfPckgRdyForDlvry.add(packageReadyForDelivery);
 			}
 		}
-		
-		totalTimeOfDeliveryOfSingleTrip = totalTimeOfDeliveryOfSingleTrip * 2;
+
+		totalTimeOfDeliveryOfPckg = vehicleAvlbleForDelivery.getNextAvailableInHrs() + totalTimeOfDeliveryOfPckg * 2;
 
 		Optional<Entry<String, DeliveryVehicle>> vehicleOption = availableVehicleFleets.entrySet().stream()
 				.filter(vehicle -> vehicle.getValue().getIsAvailable()).findFirst();
@@ -150,48 +185,30 @@ public class DeliveryUtil {
 		if (null != vehicleOption.get() && null != vehicleOption.get().getValue()) {
 			DeliveryVehicle vehicleReadyToFlagOff = vehicleOption.get().getValue();
 			vehicleReadyToFlagOff.setDeliveryPackages(listOfPckgRdyForDlvry);
-			vehicleReadyToFlagOff.setNextAvailableInHrs(totalTimeOfDeliveryOfSingleTrip);
+			vehicleReadyToFlagOff.setNextAvailableInHrs(totalTimeOfDeliveryOfPckg);
 			VehicleUtil.setVehiclesInTransit(vehicleReadyToFlagOff);
 			availableVehicleFleets.remove(vehicleReadyToFlagOff.getVId());
 		}
 
-		logger.info(availableVehicleFleets);
-		logger.info(VehicleUtil.getVehiclesInTransit());
+		// logger.info(availableVehicleFleets);
+		// logger.info(new Gson().toJson(VehicleUtil.getVehiclesInTransit()));
+
+		return VehicleUtil.getVehiclesInTransit();
 	}
 
 	public static double getDoubleValueFromStringArr(String[] arr, int index) {
 		return Double.valueOf(arr[index]);
 	}
 
-	public static void main(String[] args) {
-
-		String baseCostToDeliveryNoOfPackages = "100 5";
-		String[] baseCostToDlivrNoOfPckgArr = baseCostToDeliveryNoOfPackages.split(" ");
-
-		List<String> packageList = new ArrayList<String>();
-
-		// pkg_id1 pkg_weight1_in_kg distance1_in_km offer_code1
-		packageList.add("PKG1 50 30 OFR001");
-		packageList.add("PKG2 75 125 OFFR0008");
-		packageList.add("PKG3 175 100 OFFR003");
-		packageList.add("PKG4 110 60 OFFR002");
-		packageList.add("PKG5 155 95 NA");
-
-//		packageList.add("PKG1 75 30 OFR001");
-//		packageList.add("PKG2 75 125 OFFR0008");
-//		packageList.add("PKG3 50 100 OFFR003");
-//		packageList.add("PKG4 75 60 OFFR002");
-//		packageList.add("PKG5 25 95 NA");
-
-		List<DeliveryPackage> masterDeliveryPackageList = readPackageDetails(packageList,
-				getDoubleValueFromStringArr(baseCostToDlivrNoOfPckgArr, 0));
-		System.out.println(masterDeliveryPackageList);
+	public static List<DeliveryPackage> checkPacakageDetailsAndAssignToAvailableVehicle(List<DeliveryPackage> masterDeliveryPackageList, List<DeliveryPackage> deliveredPackages, List<String> listOfDeliveredPckgIds) {
 
 		Integer[] packageWeights = masterDeliveryPackageList.stream().map(am -> am.getWeightInKg().intValue())
 				.toArray(Integer[]::new);
 
 		PackageResponse packageResponse = null;
 		List<PackageResponse> packageWithMaxSumAndIndexOfMaxSumList = new ArrayList<PackageResponse>();
+		List<PackageResponse> packagesToBeDelivered = null;
+		
 		for (int i = 0; i < packageWeights.length; i++) {
 			packageResponse = findHeavierPackages(packageWeights, packageWeights.length, i);
 			packageWithMaxSumAndIndexOfMaxSumList.add(packageResponse);
@@ -207,20 +224,102 @@ public class DeliveryUtil {
 				.reversed().thenComparing(PackageResponse::getNumberOfPackages));
 
 		// 50, 75, 175, 110, 155 -> 50, 75, 110, 155, 175
-
 		// send packageWithMaxSumAndIndexOfMaxSumList to method and
 		// find if we have same maxweights, if yes check which has max packages
 		// calculate distance when we have same number of packages and same weight
 		// else pick max number of packages
 		// else max weight package details
 
-		packageWithMaxSumAndIndexOfMaxSumList = checkAndSelectSuitablePackageToAssign(
-				packageWithMaxSumAndIndexOfMaxSumList);
+		packagesToBeDelivered = checkAndSelectSuitablePackageToAssign(packageWithMaxSumAndIndexOfMaxSumList);
 
-		System.out.println(packageWithMaxSumAndIndexOfMaxSumList);
+		System.out.println("packagesToBeDelivered " + packagesToBeDelivered);
 
-		assignPackagetoVehicle(packageWithMaxSumAndIndexOfMaxSumList.get(0), masterDeliveryPackageList);
+		Map<String, DeliveryVehicle> assignedVehicleWithPackages = assignPackagetoVehicle(packagesToBeDelivered.get(0),
+				masterDeliveryPackageList);
+		
+		System.out.println("assignedVehicleWithPackages " + new Gson().toJson(assignedVehicleWithPackages));
+		
+		DeliveryVehicle deliveryVehicle = null;
+		if(deliveredPackages.size() > 0) {
+//			List<List<DeliveryPackage>> newPckgList = assignedVehicleWithPackages.entrySet().
+//			stream().map(v -> v.getValue())
+//			.map(v -> v.getDeliveryPackages())
+//			.map(pckgList -> pckgList.stream().
+//					filter(pckg -> !listOfDeliveredPckgIds.contains(pckg.getPackageId())).collect(Collectors.toList())).filter(lst -> !lst.isEmpty()).collect(Collectors.toList());
+			
+			for(Map.Entry<String, DeliveryVehicle> entry: assignedVehicleWithPackages.entrySet()) {
+				
+				List<DeliveryPackage> dlvryPckgListInVehicle = entry.getValue().getDeliveryPackages();
+				List<DeliveryPackage> newDlvryList = dlvryPckgListInVehicle
+				.stream()
+				.filter(pckg -> !listOfDeliveredPckgIds.contains(pckg.getPackageId()))
+				.collect(Collectors.toList());
+				
+				if(!newDlvryList.isEmpty()) {
+					deliveredPackages.addAll(newDlvryList);
+					listOfDeliveredPckgIds.addAll(addPackageIdsToList(newDlvryList, listOfDeliveredPckgIds));
+				}
+			}
+		} else {
+			deliveryVehicle = assignedVehicleWithPackages.entrySet().stream().findFirst().get().getValue();
+			deliveredPackages.addAll(deliveryVehicle.getDeliveryPackages());
+			listOfDeliveredPckgIds.addAll(addPackageIdsToList(deliveryVehicle.getDeliveryPackages(), listOfDeliveredPckgIds));
+		}
+		
+		return deliveredPackages;
+	}
+	
+	public static List<String> addPackageIdsToList(List<DeliveryPackage> deliveryPckgs,
+			List<String> listOfDeliveredPckgIds) {
+		List<String> dlPckgIds = deliveryPckgs
+				.stream()
+				.map(DeliveryPackage::getPackageId)
+				.collect(Collectors.toList());
+		return dlPckgIds;
+	}
 
-		double timeInHrs = calculateDeliveryTime(60);
+	public static void main(String[] args) {
+
+		String baseCostToDeliveryNoOfPackages = "100 5";
+		String[] baseCostToDlivrNoOfPckgArr = baseCostToDeliveryNoOfPackages.split(" ");
+
+		List<String> packageList = new ArrayList<String>();
+
+		// pkg_id1 pkg_weight1_in_kg distance1_in_km offer_code1
+//		packageList.add("PKG1 50 30 OFR001");
+//		packageList.add("PKG2 75 125 OFR0008");
+//		packageList.add("PKG3 175 100 OFR003");
+//		packageList.add("PKG4 110 60 OFR002");
+//		packageList.add("PKG5 155 95 NA");
+
+		packageList.add("PKG1 75 30 OFR001");
+		packageList.add("PKG2 75 125 OFFR0008");
+		packageList.add("PKG3 50 100 OFFR003");
+		packageList.add("PKG4 75 60 OFFR002");
+		packageList.add("PKG5 25 95 NA");
+
+		List<DeliveryPackage> masterDeliveryPackageList = readPackageDetails(packageList,
+				getDoubleValueFromStringArr(baseCostToDlivrNoOfPckgArr, 0));
+		
+		List<DeliveryPackage> deliveredPackages = new ArrayList<DeliveryPackage>();
+		List<String> listOfDeliveredPckgIds = new ArrayList<String>();
+		
+		while(masterDeliveryPackageList.size() > 0) {
+			
+			deliveredPackages = checkPacakageDetailsAndAssignToAvailableVehicle(masterDeliveryPackageList, deliveredPackages, listOfDeliveredPckgIds);
+			
+			System.out.println("deliveredPackages " + new Gson().toJson(deliveredPackages));
+			
+			// removing the delivered item from package list to deliver
+			if(deliveredPackages.size() > 0) {
+				List<String> valuesToCheck = deliveredPackages.stream().map(DeliveryPackage::getPackageId).collect(Collectors.toList());
+				masterDeliveryPackageList = masterDeliveryPackageList.stream().
+				filter(x->!valuesToCheck.contains(x.getPackageId())).
+				collect(Collectors.toList());
+				
+				System.out.println("After delivery ");
+				System.out.println(new Gson().toJson(masterDeliveryPackageList));
+			}
+		}
 	}
 }

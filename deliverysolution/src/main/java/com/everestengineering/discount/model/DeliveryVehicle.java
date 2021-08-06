@@ -8,7 +8,7 @@ import com.everestengineering.delivery.model.DeliveryPackage;
 import lombok.Data;
 
 @Data
-public class DeliveryVehicle {
+public class DeliveryVehicle{
 	
 	private String vId;
 	private Boolean isAvailable;
@@ -22,7 +22,6 @@ public class DeliveryVehicle {
 	}
 	
 	public DeliveryVehicle(String vId, Boolean isAvailable, Double nextAvailableInHrs) {
-		
 		this.vId = vId;
 		this.isAvailable = isAvailable;
 		this.nextAvailableInHrs = nextAvailableInHrs;

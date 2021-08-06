@@ -4,6 +4,7 @@ import com.everestengineering.discount.model.DiscountCoupon;
 import com.everestengineering.discount.model.DiscountCriteria;
 import com.everestengineering.discount.model.DiscountResponse;
 import com.everestengineering.discount.util.DiscountUtil;
+import com.google.gson.annotations.Expose;
 
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class DeliveryPackage {
 	private Double timeTakenToDeliverInHrs;
 	private Double baseCostOfDelivery;
 	private Double totalCostToDeliver;
+	@Expose(deserialize = false)
 	private DiscountCoupon discountCoupon;
 	private DiscountResponse discountResponse;
 	
