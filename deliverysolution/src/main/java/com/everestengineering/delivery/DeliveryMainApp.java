@@ -52,13 +52,8 @@ public class DeliveryMainApp {
 			
 			if(null != deliveredPackageDetails &&
 					!deliveredPackageDetails.isEmpty()) {
-				deliveredPackages = deliveredPackageDetails.stream()
-				.map(pckg -> 
-				new DeliveryPackage(
-				pckg.getPackageId(), pckg.getDiscountResponse().getTotalDiscountInAmount(),
-				pckg.getDiscountResponse().getFinalDeliveryCost(), pckg.getTimeTakenToDeliverInHrs()).getDeliveredPckgDetails())
-				.collect(Collectors.toList());
-				logger.info("O/P expected: ");
+				deliveredPackages = DeliveryUtil.getInstance().
+						deliveryPackageListToExpectedFormat(deliveredPackageDetails);
 				logger.info(deliveredPackages);
 			} else {
 				logger.info("None of the packages has valid information to deliver, please check the packages again ");

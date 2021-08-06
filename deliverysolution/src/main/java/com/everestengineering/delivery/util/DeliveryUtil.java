@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -311,5 +312,17 @@ public class DeliveryUtil {
 				.map(DeliveryPackage::getPackageId)
 				.collect(Collectors.toList());
 		return dlPckgIds;
+	}
+	
+	public List<String> deliveryPackageListToExpectedFormat(List<DeliveryPackage> deliveryPackageList){
+		
+		List<String> deliveredPckgs = deliveryPackageList.stream()
+				.map(pckg -> 
+				new DeliveryPackage(
+				pckg.getPackageId(), pckg.getDiscountResponse().getTotalDiscountInAmount(),
+				pckg.getDiscountResponse().getFinalDeliveryCost(), pckg.getTimeTakenToDeliverInHrs()).getDeliveredPckgDetails())
+				.collect(Collectors.toList());
+		Collections.sort(deliveredPckgs);
+		return deliveredPckgs;
 	}
 }
