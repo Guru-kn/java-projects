@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -28,6 +27,22 @@ import com.google.gson.Gson;
 public class DeliveryUtil {
 
 	static Logger logger = Logger.getLogger(DeliveryUtil.class);
+
+	private DeliveryUtil() {
+
+	}
+
+	public static DeliveryUtil deliveryUtil = null;
+
+	static {
+		if (deliveryUtil == null)
+			deliveryUtil = new DeliveryUtil();
+	}
+
+	public static DeliveryUtil getInstance() {
+		return deliveryUtil;
+	}
+
 
 	public static PackageResponse findHeavierPackages(Integer arr[], int arrLength, int maxNumOfEleToSumWith) {
 		int[] indexesUsedToAdd = new int[arr.length];
@@ -67,7 +82,7 @@ public class DeliveryUtil {
 		return packageResponse;
 	}
 
-	public static List<DeliveryPackage> readPackageDetails(List<String> packageList, Double baseCostOfDelivery) {
+	public List<DeliveryPackage> readPackageDetails(List<String> packageList, Double baseCostOfDelivery) {
 
 		List<DeliveryPackage> deliveryPackageList = new ArrayList<DeliveryPackage>();
 
@@ -189,18 +204,14 @@ public class DeliveryUtil {
 			VehicleUtil.setVehiclesInTransit(vehicleReadyToFlagOff);
 			availableVehicleFleets.remove(vehicleReadyToFlagOff.getVId());
 		}
-
-		// logger.info(availableVehicleFleets);
-		// logger.info(new Gson().toJson(VehicleUtil.getVehiclesInTransit()));
-
 		return VehicleUtil.getVehiclesInTransit();
 	}
 
-	public static double getDoubleValueFromStringArr(String[] arr, int index) {
+	public double getDoubleValueFromStringArr(String[] arr, int index) {
 		return Double.valueOf(arr[index]);
 	}
 
-	public static List<DeliveryPackage> checkPacakageDetailsAndAssignToAvailableVehicle(List<DeliveryPackage> masterDeliveryPackageList, List<DeliveryPackage> deliveredPackages, List<String> listOfDeliveredPckgIds) {
+	public List<DeliveryPackage> checkPackageDetailsAndAssignToAvailableVehicle(List<DeliveryPackage> masterDeliveryPackageList, List<DeliveryPackage> deliveredPackages, List<String> listOfDeliveredPckgIds) {
 
 		Integer[] packageWeights = masterDeliveryPackageList.stream().map(am -> am.getWeightInKg().intValue())
 				.toArray(Integer[]::new);
@@ -232,20 +243,11 @@ public class DeliveryUtil {
 
 		packagesToBeDelivered = checkAndSelectSuitablePackageToAssign(packageWithMaxSumAndIndexOfMaxSumList);
 
-		System.out.println("packagesToBeDelivered " + packagesToBeDelivered);
-
 		Map<String, DeliveryVehicle> assignedVehicleWithPackages = assignPackagetoVehicle(packagesToBeDelivered.get(0),
 				masterDeliveryPackageList);
 		
-		System.out.println("assignedVehicleWithPackages " + new Gson().toJson(assignedVehicleWithPackages));
-		
 		DeliveryVehicle deliveryVehicle = null;
 		if(deliveredPackages.size() > 0) {
-//			List<List<DeliveryPackage>> newPckgList = assignedVehicleWithPackages.entrySet().
-//			stream().map(v -> v.getValue())
-//			.map(v -> v.getDeliveryPackages())
-//			.map(pckgList -> pckgList.stream().
-//					filter(pckg -> !listOfDeliveredPckgIds.contains(pckg.getPackageId())).collect(Collectors.toList())).filter(lst -> !lst.isEmpty()).collect(Collectors.toList());
 			
 			for(Map.Entry<String, DeliveryVehicle> entry: assignedVehicleWithPackages.entrySet()) {
 				
@@ -266,6 +268,8 @@ public class DeliveryUtil {
 			listOfDeliveredPckgIds.addAll(addPackageIdsToList(deliveryVehicle.getDeliveryPackages(), listOfDeliveredPckgIds));
 		}
 		
+		logger.info("Vehicle delivery details " + new Gson().toJson(assignedVehicleWithPackages));
+		
 		return deliveredPackages;
 	}
 	
@@ -280,8 +284,8 @@ public class DeliveryUtil {
 
 	public static void main(String[] args) {
 
-		String baseCostToDeliveryNoOfPackages = "100 5";
-		String[] baseCostToDlivrNoOfPckgArr = baseCostToDeliveryNoOfPackages.split(" ");
+		String baseCostOfDeliveryNoOfPackages = "100 5";
+		String[] baseCostToDlivrNoOfPckgArr = baseCostOfDeliveryNoOfPackages.split(" ");
 
 		List<String> packageList = new ArrayList<String>();
 
@@ -298,28 +302,26 @@ public class DeliveryUtil {
 		packageList.add("PKG4 75 60 OFFR002");
 		packageList.add("PKG5 25 95 NA");
 
-		List<DeliveryPackage> masterDeliveryPackageList = readPackageDetails(packageList,
-				getDoubleValueFromStringArr(baseCostToDlivrNoOfPckgArr, 0));
-		
-		List<DeliveryPackage> deliveredPackages = new ArrayList<DeliveryPackage>();
-		List<String> listOfDeliveredPckgIds = new ArrayList<String>();
-		
-		while(masterDeliveryPackageList.size() > 0) {
-			
-			deliveredPackages = checkPacakageDetailsAndAssignToAvailableVehicle(masterDeliveryPackageList, deliveredPackages, listOfDeliveredPckgIds);
-			
-			System.out.println("deliveredPackages " + new Gson().toJson(deliveredPackages));
-			
-			// removing the delivered item from package list to deliver
-			if(deliveredPackages.size() > 0) {
-				List<String> valuesToCheck = deliveredPackages.stream().map(DeliveryPackage::getPackageId).collect(Collectors.toList());
-				masterDeliveryPackageList = masterDeliveryPackageList.stream().
-				filter(x->!valuesToCheck.contains(x.getPackageId())).
-				collect(Collectors.toList());
-				
-				System.out.println("After delivery ");
-				System.out.println(new Gson().toJson(masterDeliveryPackageList));
-			}
-		}
+//		List<DeliveryPackage> masterDeliveryPackageList = readPackageDetails(packageList,
+//				getDoubleValueFromStringArr(baseCostToDlivrNoOfPckgArr, 0));
+//		
+//		List<DeliveryPackage> deliveredPackages = new ArrayList<DeliveryPackage>();
+//		List<String> listOfDeliveredPckgIds = new ArrayList<String>();
+//		
+//		// loop over all pacakages and assign to delivery vehicle, calculate time taken
+//		while(masterDeliveryPackageList.size() > 0) {
+//			
+//			deliveredPackages = checkPacakageDetailsAndAssignToAvailableVehicle(masterDeliveryPackageList, deliveredPackages, listOfDeliveredPckgIds);
+//			
+//			// removing the delivered item from package list to deliver
+//			if(deliveredPackages.size() > 0) {
+//				List<String> valuesToCheck = deliveredPackages.stream().map(DeliveryPackage::getPackageId).collect(Collectors.toList());
+//				masterDeliveryPackageList = masterDeliveryPackageList.stream().
+//				filter(x->!valuesToCheck.contains(x.getPackageId())).
+//				collect(Collectors.toList());
+//			}
+//		}
+//		
+//		logger.info("deliveredPackages " + new Gson().toJson(deliveredPackages));
 	}
 }
