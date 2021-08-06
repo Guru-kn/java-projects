@@ -42,9 +42,12 @@ public class DeliveryMainApp {
 				pckg.getPackageId(), pckg.getDiscountResponse().getTotalDiscountInAmount(),
 				pckg.getDiscountResponse().getFinalDeliveryCost(), pckg.getTimeTakenToDeliverInHrs()).getDeliveredPckgDetails())
 				.collect(Collectors.toList());
+				logger.info("O/P expected: ");
+				logger.info(deliveredPackages);
+			} else {
+				logger.info("None of the packages has valid information to deliver, please check the packages again ");
 			}
-			logger.info("O/P expected: ");
-			logger.info(deliveredPackages);
+			
 		}catch (Exception e) {
 			logger.error(e);
 		}

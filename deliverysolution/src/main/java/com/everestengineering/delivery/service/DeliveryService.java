@@ -51,8 +51,8 @@ public class DeliveryService {
 				packageListToDeliver.add(input.nextLine());
 			}
 
-			List<DeliveryPackage> masterDeliveryPackageList = DeliveryUtil.getInstance().readPackageDetails(packageListToDeliver,
-					baseDeliveryCost);
+			List<DeliveryPackage> masterDeliveryPackageList = DeliveryUtil
+					.getInstance().readPackageDetails(packageListToDeliver, baseDeliveryCost);
 
 			deliveredPackages = new ArrayList<DeliveryPackage>();
 			List<String> listOfDeliveredPckgIds = new ArrayList<String>();

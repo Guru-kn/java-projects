@@ -21,7 +21,9 @@ import com.everestengineering.delivery.model.PackageResponse;
 import com.everestengineering.discount.constant.ValidationConstant;
 import com.everestengineering.discount.model.DeliveryVehicle;
 import com.everestengineering.discount.model.DiscountResponse;
+import com.everestengineering.discount.model.OrderResponse;
 import com.everestengineering.discount.util.CostUtil;
+import com.everestengineering.discount.util.ValidationUtil;
 import com.google.gson.Gson;
 
 public class DeliveryUtil {
@@ -90,6 +92,16 @@ public class DeliveryUtil {
 
 		DeliveryPackage deliveryPackage = null;
 		for (String pckage : packageList) {
+			
+			OrderResponse orderResponse = ValidationUtil.getInstance().
+			validatePackageIdWeightInKgDistInKmAndOffCode(pckage, new OrderResponse());
+			
+			// packages wont be added to fleet if details has some issue
+			if(!orderResponse.isValid()) {
+				logger.info("Validation failed " + orderResponse.getValidationMessage());
+				logger.info("----------------------------END OF O/P---------------------------------------");
+				continue;
+			}
 
 			deliveryPackage = new DeliveryPackage(pckage, baseCostOfDelivery);
 			deliveryPackageList.add(deliveryPackage);
