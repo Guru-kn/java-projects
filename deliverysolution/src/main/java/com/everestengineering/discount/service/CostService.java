@@ -3,7 +3,6 @@ package com.everestengineering.discount.service;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 import com.everestengineering.discount.model.DiscountResponse;
 import com.everestengineering.discount.model.OrderResponse;
@@ -92,11 +91,11 @@ public class CostService {
 		    		distanceInKms = Double.valueOf(pkgIdPkgWeightInKgDistInKmOffCodeArr[2]);
 		    		offerCode = pkgIdPkgWeightInKgDistInKmOffCodeArr[3].trim();
 	    		}catch (IndexOutOfBoundsException e) {
-	    			logger.log(Priority.ERROR, e.getMessage());
+	    			logger.error(e.getMessage());
 	    		}catch (NumberFormatException e) {
-	    			logger.log(Priority.ERROR, e.getMessage() + ", Enter proper number");
+	    			logger.error(e.getMessage() + ", Enter proper number");
 	    		}catch (Exception e) {
-	    			logger.log(Priority.ERROR, e.getMessage());
+	    			logger.error(e.getMessage());
 	    		}finally {
 	    			double baseTotalCost = CostUtil.getInstance().calculateTotalCost(baseDeliveryCost, weightInKg, distanceInKms);
 
@@ -118,18 +117,18 @@ public class CostService {
 				}
 	        }
 		}catch (IndexOutOfBoundsException e) {
-			logger.log(Priority.ERROR, e.getMessage());
+			logger.error(e.getMessage());
 		}catch (NumberFormatException e) {
-			logger.log(Priority.ERROR, e.getMessage() + ", Enter proper number");
+			logger.error(e.getMessage() + ", Enter proper number");
 		}catch (Exception e) {
-			logger.log(Priority.ERROR, e.getMessage());
+			logger.error(e.getMessage());
 		}
 		finally {
 			if(input != null) {
 				try {
 					input.close();
 				}catch (Exception e) {
-					logger.log(Priority.ERROR, e.getMessage());
+					logger.error(e.getMessage());
 				}
 			}
 		}

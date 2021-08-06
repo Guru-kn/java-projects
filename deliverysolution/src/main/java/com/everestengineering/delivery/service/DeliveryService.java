@@ -30,12 +30,14 @@ public class DeliveryService {
 		return deliveryService;
 	}
 
-	public void sendPackagesToDeliver(String baseCostOfDeliveryNoOfPackages) {
+	public List<DeliveryPackage> sendPackagesToDeliver(String baseCostOfDeliveryNoOfPackages) {
 
 		String[] baseCostToDlivrAndNoOfPckgArr = baseCostOfDeliveryNoOfPackages.split(" ");
 
 		Scanner input = null;
-		List<String> packageList = new ArrayList<String>();
+		List<String> packageListToDeliver = new ArrayList<String>();
+		List<DeliveryPackage> deliveredPackages = null;
+		
 		try {
 
 			double baseDeliveryCost = DeliveryUtil.getInstance()
@@ -46,13 +48,13 @@ public class DeliveryService {
 			logger.info("Enter the details of " + numberOfPackages + " packages now");
 
 			for (int i = 0; i < numberOfPackages; i++) {
-				packageList.add(input.nextLine());
+				packageListToDeliver.add(input.nextLine());
 			}
 
-			List<DeliveryPackage> masterDeliveryPackageList = DeliveryUtil.getInstance().readPackageDetails(packageList,
+			List<DeliveryPackage> masterDeliveryPackageList = DeliveryUtil.getInstance().readPackageDetails(packageListToDeliver,
 					baseDeliveryCost);
 
-			List<DeliveryPackage> deliveredPackages = new ArrayList<DeliveryPackage>();
+			deliveredPackages = new ArrayList<DeliveryPackage>();
 			List<String> listOfDeliveredPckgIds = new ArrayList<String>();
 
 			// loop over all pacakages and assign to delivery vehicle, calculate time taken
@@ -70,10 +72,11 @@ public class DeliveryService {
 				}
 			}
 
-			logger.info("deliveredPackages " + new Gson().toJson(deliveredPackages));
+			logger.info("delivered packages details " + new Gson().toJson(deliveredPackages));
 		} catch (Exception e) {
-			// TODO: handle exception
+			logger.error(e.getMessage());
 		}
-
+		
+		return deliveredPackages;
 	}
 }

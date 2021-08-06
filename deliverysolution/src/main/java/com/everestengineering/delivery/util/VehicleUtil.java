@@ -32,7 +32,6 @@ public class VehicleUtil {
 	}
 
 	private static void addDeliveryVehicles() {
-		// TODO Auto-generated method stub
 		
 		if(vehicleFleets == null) {
 			vehicleFleets = new HashMap<String, DeliveryVehicle>();

@@ -1,7 +1,6 @@
 package com.everestengineering.delivery.model;
 
 import com.everestengineering.discount.model.DiscountCoupon;
-import com.everestengineering.discount.model.DiscountCriteria;
 import com.everestengineering.discount.model.DiscountResponse;
 import com.everestengineering.discount.util.DiscountUtil;
 import com.google.gson.annotations.Expose;
@@ -17,9 +16,9 @@ public class DeliveryPackage {
 	private Double timeTakenToDeliverInHrs;
 	private Double baseCostOfDelivery;
 	private Double totalCostToDeliver;
-	@Expose(deserialize = false)
 	private DiscountCoupon discountCoupon;
 	private DiscountResponse discountResponse;
+	private String deliveredPckgDetails;
 	
 	public DeliveryPackage() {
 		
@@ -35,5 +34,12 @@ public class DeliveryPackage {
 
 		String offerCode = pkgIdPkgWeightInKgDistInKmOffCodeArr[3].trim();
 		this.discountCoupon = DiscountUtil.getDiscountCoupons().get(offerCode);
+	}
+	
+	public DeliveryPackage(String pckId, Double discount,
+			Double finalDeliveryCost, Double totalTimeToDeliverPckInHrs) {
+		
+		this.deliveredPckgDetails = pckId + " " + discount + " " +
+				finalDeliveryCost + " " + totalTimeToDeliverPckInHrs;
 	}
 }

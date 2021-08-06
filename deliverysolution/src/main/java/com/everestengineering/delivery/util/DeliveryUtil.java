@@ -57,9 +57,11 @@ public class DeliveryUtil {
 		}
 
 		int res = 0;
+		
 		for (int i = 0; i < maxNumOfEleToSumWith; i++) {
-			if (res >= 200 || (res + arr[i] > 200))
+			if (res >= 200 || (res + arr[i] > 200)) {
 				break;
+			}
 			res += arr[i];
 			indexesUsedToAdd[i] = i;
 		}
@@ -173,7 +175,8 @@ public class DeliveryUtil {
 		DeliveryPackage packageReadyForDelivery = null;
 		DiscountResponse discountResponse = null;
 		double totalTimeOfDeliveryOfPckg = 0;
-
+		
+		// adding all the details required for package to be delivered ie cost, discount, time required ...
 		for (int indxInMasterList : arrOfPackagesWhichCanBeAssigned) {
 			packageReadyForDelivery = masterPackageList.get(indxInMasterList);
 
@@ -195,16 +198,18 @@ public class DeliveryUtil {
 				totalTimeOfDeliveryOfPckg = totalTimeOfDeliveryOfPckg == 0
 						? (totalTimeOfDeliveryOfPckg + totTimeToDeliverPckge)
 						: Math.max(totalTimeOfDeliveryOfPckg, totTimeToDeliverPckge);
+						
 				packageReadyForDelivery.setDiscountResponse(discountResponse);
 				listOfPckgRdyForDlvry.add(packageReadyForDelivery);
 			}
 		}
 
-		totalTimeOfDeliveryOfPckg = vehicleAvlbleForDelivery.getNextAvailableInHrs() + totalTimeOfDeliveryOfPckg * 2;
+		totalTimeOfDeliveryOfPckg = vehicleAvlbleForDelivery.getNextAvailableInHrs() + (totalTimeOfDeliveryOfPckg * 2);
 
 		Optional<Entry<String, DeliveryVehicle>> vehicleOption = availableVehicleFleets.entrySet().stream()
 				.filter(vehicle -> vehicle.getValue().getIsAvailable()).findFirst();
-
+		
+		// updating vehicle fleet after assiging package to vehicle
 		if (null != vehicleOption.get() && null != vehicleOption.get().getValue()) {
 			DeliveryVehicle vehicleReadyToFlagOff = vehicleOption.get().getValue();
 			vehicleReadyToFlagOff.setDeliveryPackages(listOfPckgRdyForDlvry);
@@ -235,30 +240,22 @@ public class DeliveryUtil {
 		
 		for (int i = 0; i < packageWeights.length; i++) {
 			packageResponse = findHeavierPackages(packageWeights, packageWeights.length, i);
+			
+			System.out.println("after findHeavierPackages " + new Gson().toJson(packageResponse));
+			
 			packageWithMaxSumAndIndexOfMaxSumList.add(packageResponse);
 		}
-
-		// Collections.sort(packageWithMaxSumAndIndexOfMaxSumList, new
-		// MaxWeightComparator());
-
-		// String[] packageWithCostAndDiscount =
-		// CostService.getInstance().calculateTotalCostOfDelivery("100 5");
-
+		
+		//Sort pckgs with max weight first
 		Collections.sort(packageWithMaxSumAndIndexOfMaxSumList, Comparator.comparing(PackageResponse::getMaxWeight)
 				.reversed().thenComparing(PackageResponse::getNumberOfPackages));
-
-		// 50, 75, 175, 110, 155 -> 50, 75, 110, 155, 175
-		// send packageWithMaxSumAndIndexOfMaxSumList to method and
-		// find if we have same maxweights, if yes check which has max packages
-		// calculate distance when we have same number of packages and same weight
-		// else pick max number of packages
-		// else max weight package details
 
 		packagesToBeDelivered = checkAndSelectSuitablePackageToAssign(packageWithMaxSumAndIndexOfMaxSumList);
 
 		Map<String, DeliveryVehicle> assignedVehicleWithPackages = assignPackagetoVehicle(packagesToBeDelivered.get(0),
 				masterDeliveryPackageList);
 		
+		// add delivery package to final delivery list
 		DeliveryVehicle deliveryVehicle = null;
 		if(deliveredPackages.size() > 0) {
 			

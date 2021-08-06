@@ -11,7 +11,6 @@ public class NoSuchDiscountException extends Exception{
 	
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return this.couponCode + " coupon applied is invalid";
 	}
 }
