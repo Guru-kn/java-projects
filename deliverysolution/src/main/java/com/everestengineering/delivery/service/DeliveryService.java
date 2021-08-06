@@ -30,26 +30,11 @@ public class DeliveryService {
 		return deliveryService;
 	}
 
-	public List<DeliveryPackage> sendPackagesToDeliver(String baseCostOfDeliveryNoOfPackages) {
+	public List<DeliveryPackage> sendPackagesToDeliver(double baseDeliveryCost, List<String> packageListToDeliver) {
 
-		String[] baseCostToDlivrAndNoOfPckgArr = baseCostOfDeliveryNoOfPackages.split(" ");
-
-		Scanner input = null;
-		List<String> packageListToDeliver = new ArrayList<String>();
 		List<DeliveryPackage> deliveredPackages = null;
 		
 		try {
-
-			double baseDeliveryCost = DeliveryUtil.getInstance()
-					.getDoubleValueFromStringArr(baseCostToDlivrAndNoOfPckgArr, 0);
-			int numberOfPackages = Integer.valueOf(baseCostToDlivrAndNoOfPckgArr[1]);
-
-			input = new Scanner(System.in);
-			logger.info("Enter the details of " + numberOfPackages + " packages now");
-
-			for (int i = 0; i < numberOfPackages; i++) {
-				packageListToDeliver.add(input.nextLine());
-			}
 
 			List<DeliveryPackage> masterDeliveryPackageList = DeliveryUtil
 					.getInstance().readPackageDetails(packageListToDeliver, baseDeliveryCost);

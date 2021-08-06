@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import com.everestengineering.delivery.model.DeliveryPackage;
 import com.everestengineering.delivery.service.DeliveryService;
+import com.everestengineering.delivery.util.DeliveryUtil;
 import com.everestengineering.discount.model.OrderResponse;
 import com.everestengineering.discount.util.ValidationUtil;
 
@@ -24,6 +25,8 @@ public class DeliveryMainApp {
 			input = new Scanner(System.in);
 			String baseCostOfDeliveryAndNoOfPckgs = input.nextLine();
 			
+			String[] baseCostToDlivrAndNoOfPckgArr = baseCostOfDeliveryAndNoOfPckgs.split(" ");
+			
 			OrderResponse orderResponse = ValidationUtil.getInstance().
 					validateBaseDeliveryCostAndNoOfPackages(baseCostOfDeliveryAndNoOfPckgs, new OrderResponse());
 			
@@ -31,8 +34,21 @@ public class DeliveryMainApp {
 				logger.info("Validation failed " + orderResponse.getValidationMessage());
 			}
 			
+			double baseDeliveryCost = DeliveryUtil.getInstance()
+					.getDoubleValueFromStringArr(baseCostToDlivrAndNoOfPckgArr, 0);
+			int numberOfPackages = Integer.valueOf(baseCostToDlivrAndNoOfPckgArr[1]);
+
+			input = new Scanner(System.in);
+			logger.info("Enter the details of " + numberOfPackages + " packages now");
+			
+			List<String> packageListToDeliver = new ArrayList<String>();
+			for (int i = 0; i < numberOfPackages; i++) {
+				packageListToDeliver.add(input.nextLine());
+			}
+			
 			List<String> deliveredPackages = new ArrayList<String>();
-			List<DeliveryPackage>  deliveredPackageDetails = DeliveryService.getInstance().sendPackagesToDeliver(baseCostOfDeliveryAndNoOfPckgs);
+			List<DeliveryPackage>  deliveredPackageDetails = DeliveryService.getInstance().
+					sendPackagesToDeliver(baseDeliveryCost, packageListToDeliver);
 			
 			if(null != deliveredPackageDetails &&
 					!deliveredPackageDetails.isEmpty()) {

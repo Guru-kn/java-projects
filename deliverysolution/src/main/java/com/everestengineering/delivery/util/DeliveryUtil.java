@@ -60,21 +60,28 @@ public class DeliveryUtil {
 
 		int res = 0;
 		
+		int lastIndexAdded = -1;
 		for (int i = 0; i < maxNumOfEleToSumWith; i++) {
 			if (res >= 200 || (res + arr[i] > 200)) {
 				break;
 			}
 			res += arr[i];
 			indexesUsedToAdd[i] = i;
+			lastIndexAdded = i;
 		}
 
-		int curr_sum = res;
+		int currSum = res;
 		for (int i = maxNumOfEleToSumWith; i < arrLength; i++) {
-			if (res <= 200 && ((curr_sum + arr[i] - arr[i - maxNumOfEleToSumWith]) <= 200)) {
-				curr_sum += arr[i] - arr[i - maxNumOfEleToSumWith];
+			if (res < 200 && ((currSum + arr[i] - arr[i - maxNumOfEleToSumWith]) <= 200)) {
+				currSum += arr[i] - arr[i - maxNumOfEleToSumWith];
 				indexesUsedToAdd[i - maxNumOfEleToSumWith] = i;
+			} else if(res < 200 && (currSum - arr[lastIndexAdded] + arr[i] <= 200)) {
+				currSum = currSum - arr[lastIndexAdded] + arr[i];
+				indexesUsedToAdd[i] = i;
+				indexesUsedToAdd[maxNumOfEleToSumWith-1] = -1;
 			}
-			res = Math.max(res, curr_sum);
+			
+			res = Math.max(res, currSum);
 		}
 
 		PackageResponse packageResponse = new PackageResponse();
