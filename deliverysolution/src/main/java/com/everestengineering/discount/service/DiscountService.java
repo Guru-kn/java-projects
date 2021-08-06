@@ -43,9 +43,6 @@ public class DiscountService {
 
 			logger.info("Coupon code is found " + couponCode + ", will check if its valid or not");
 			logger.info("Coupon details " + new Gson().toJson(discountCriteria));
-			logger.info("totalDeliveryCost " + totalDeliveryCost);
-			logger.info("totalWeight " + totalWeight);
-			logger.info("distanceToDestination " + distanceToDestination);
 
 			if (null == discountCriteria) {
 				discountResponse.setCriteriaMessage("Invalid coupon code");

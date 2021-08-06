@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import com.everestengineering.discount.constant.DiscountConstant.CouponNames;
 import com.everestengineering.discount.constant.DiscountConstant.DiscountMeasure;
@@ -16,7 +17,7 @@ import com.everestengineering.discount.model.DiscountResponse;
 
 public class DiscountUtil {
 
-	Logger logger = Logger.getLogger(DiscountUtil.class.getName());
+	Logger logger = Logger.getLogger(DiscountUtil.class);
 
 	private static Map<String, DiscountCoupon> discountCoupons;
 
@@ -86,12 +87,15 @@ public class DiscountUtil {
 		if (discountResponse.isCouponApplied()) {
 			double discountInAmount = calculateDiscountBasedOnPercentageOrAmount(discountCriteria, baseDeliveryCost);
 			discountResponse.setTotalDiscountInAmount(Double.valueOf(discountInAmount));
+			logger.info("Total discount applied is " + Double.valueOf(discountInAmount));
 			return discountResponse;
 		} else {
-			discountResponse.setCriteriaMessage(
-					getDiscountCriteriaMessage(couponCode, discountCriteria, distanceToDestination,
-							totalWeight, discountResponse.isDistanceCriteria(),
-							discountResponse.isWeightCriteria()));
+			String discCriteriaMsg = getDiscountCriteriaMessage(couponCode, discountCriteria, distanceToDestination,
+					totalWeight, discountResponse.isDistanceCriteria(),
+					discountResponse.isWeightCriteria());
+			discountResponse.setCriteriaMessage(discCriteriaMsg);
+			
+			logger.info(discCriteriaMsg);
 		}
 		
 		return discountResponse;

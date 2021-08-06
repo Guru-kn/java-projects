@@ -14,7 +14,7 @@ public class DeliveryMainApp {
 		
 		Scanner input = null;
 		try {
-			logger.info("Enter the base delivery cost and number of packages in 100 5 format ");
+			logger.info("Enter the base delivery cost and number of packages in `100 5` format ");
 			input = new Scanner(System.in);
 			String baseCostOfDeliveryAndNoOfPckgs = input.nextLine();
 			DeliveryService.getInstance().sendPackagesToDeliver(baseCostOfDeliveryAndNoOfPckgs);
