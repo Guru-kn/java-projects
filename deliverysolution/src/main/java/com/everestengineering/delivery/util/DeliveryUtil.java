@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -47,8 +46,8 @@ public class DeliveryUtil {
 	}
 
 
-	public static PackageResponse findHeavierPackages(Integer arr[], int arrLength, int maxNumOfEleToSumWith) {
-		int[] indexesUsedToAdd = new int[arr.length];
+	public static PackageResponse findHeavierPackages(Integer[] packageWeights, int arrLength, int maxNumOfEleToSumWith) {
+		int[] indexesUsedToAdd = new int[packageWeights.length];
 		Arrays.fill(indexesUsedToAdd, -1);
 
 		// k must be greater
@@ -59,37 +58,40 @@ public class DeliveryUtil {
 			return packageResponse;
 		}
 
-		int res = 0;
+		int maxWeight = 0;
 		
 		int lastIndexAdded = -1;
 		for (int i = 0; i < maxNumOfEleToSumWith; i++) {
-			if (res >= 200 || (res + arr[i] > 200)) {
+			if (maxWeight >= DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS
+					|| (maxWeight + packageWeights[i] > DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS)) {
 				break;
 			}
-			res += arr[i];
+			maxWeight += packageWeights[i];
 			indexesUsedToAdd[i] = i;
 			lastIndexAdded = i;
 		}
 
-		int currSum = res;
+		int currSum = maxWeight;
 		for (int i = maxNumOfEleToSumWith; i < arrLength; i++) {
-			if (res < 200 && ((currSum + arr[i] - arr[i - maxNumOfEleToSumWith]) <= 200)) {
-				currSum += arr[i] - arr[i - maxNumOfEleToSumWith];
+			if (maxWeight < DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS &&
+					((currSum + packageWeights[i] - packageWeights[i - maxNumOfEleToSumWith]) <=
+					DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS)) {
+				currSum += packageWeights[i] - packageWeights[i - maxNumOfEleToSumWith];
 				indexesUsedToAdd[i - maxNumOfEleToSumWith] = i;
-			} else if(res < 200 && (currSum - arr[lastIndexAdded] + arr[i] <= 200)) {
-				currSum = currSum - arr[lastIndexAdded] + arr[i];
+			} else if(maxWeight < DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS &&
+					(currSum - packageWeights[lastIndexAdded] + packageWeights[i] <= DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS)) {
+				currSum = currSum - packageWeights[lastIndexAdded] + packageWeights[i];
 				indexesUsedToAdd[i] = i;
 				indexesUsedToAdd[maxNumOfEleToSumWith-1] = -1;
 			}
 			
-			res = Math.max(res, currSum);
+			maxWeight = Math.max(maxWeight, currSum);
 		}
-
-		PackageResponse packageResponse = new PackageResponse();
+		
 		indexesUsedToAdd = Arrays.stream(indexesUsedToAdd).filter(x -> x >= 0).toArray();
-		packageResponse.setIndexOfMaxSum(indexesUsedToAdd);
-		packageResponse.setNumberOfPackages(indexesUsedToAdd.length);
-		packageResponse.setMaxWeight(res);
+
+		PackageResponse packageResponse = new 
+				PackageResponse(maxWeight, indexesUsedToAdd, indexesUsedToAdd.length);
 
 		return packageResponse;
 	}
@@ -223,8 +225,10 @@ public class DeliveryUtil {
 				listOfPckgRdyForDlvry.add(packageReadyForDelivery);
 			}
 		}
-
-		totalTimeOfDeliveryOfPckg = vehicleAvlbleForDelivery.getNextAvailableInHrs() + (totalTimeOfDeliveryOfPckg * 2);
+		
+		// next available time plus (total tim for delivery * 2) -> *2 because its round trip
+		totalTimeOfDeliveryOfPckg = vehicleAvlbleForDelivery.getNextAvailableInHrs() +
+				(totalTimeOfDeliveryOfPckg * 2);
 
 		Optional<Entry<String, DeliveryVehicle>> vehicleOption = availableVehicleFleets.entrySet().stream()
 				.filter(vehicle -> vehicle.getValue().getIsAvailable()).findFirst();

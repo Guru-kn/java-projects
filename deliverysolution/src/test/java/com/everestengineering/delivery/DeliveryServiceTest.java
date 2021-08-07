@@ -9,12 +9,84 @@ import org.apache.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import com.everestengineering.delivery.model.DeliveryPackage;
+import com.everestengineering.delivery.model.PackageResponse;
 import com.everestengineering.delivery.service.DeliveryService;
 import com.everestengineering.delivery.util.DeliveryUtil;
+import com.google.gson.Gson;
 
 public class DeliveryServiceTest {
 	
 	Logger logger = Logger.getLogger(DeliveryServiceTest.class);
+	
+	@Test
+	public void testMaxWeightIndexCalculation() {
+		
+		Integer[] packageWeights = {50, 75, 110, 155, 175};
+		
+		PackageResponse packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
+				packageWeights.length, 2);
+		
+		int[] expected = {2, 1};
+		for(int i=0; i< expected.length; i++) {
+			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
+		}
+		assertEquals(185, packageResponse.getMaxWeight());
+		
+		packageWeights = new Integer[]{50, 75, 150};
+		
+		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
+				packageWeights.length, 2);
+		
+		expected = new int[]{0, 2};
+		for(int i=0; i< expected.length; i++) {
+			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
+		}
+		assertEquals(200, packageResponse.getMaxWeight());
+		
+		packageWeights = new Integer[]{50, 50, 150};
+		
+		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
+				packageWeights.length, 2);
+		
+		expected = new int[]{2, 1};
+		for(int i=0; i< expected.length; i++) {
+			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
+		}
+		assertEquals(200, packageResponse.getMaxWeight());
+		
+		packageWeights = new Integer[]{50, 175};
+		
+		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
+				packageWeights.length, 1);
+		
+		expected = new int[]{1};
+		for(int i=0; i< expected.length; i++) {
+			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
+		}
+		assertEquals(175, packageResponse.getMaxWeight());
+		
+		packageWeights = new Integer[]{50, 75, 150, 175};
+		
+		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
+				packageWeights.length, 2);
+		
+		expected = new int[]{0, 2};
+		for(int i=0; i< expected.length; i++) {
+			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
+		}
+		assertEquals(200, packageResponse.getMaxWeight());
+		
+		packageWeights = new Integer[]{50, 75, 150, 200};
+		
+		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
+				packageWeights.length, 1);
+		
+		expected = new int[]{1};
+		for(int i=0; i< expected.length; i++) {
+			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
+		}
+		assertEquals(200, packageResponse.getMaxWeight());
+	}
 
 	@Test
 	public void testDeliveryService() {
