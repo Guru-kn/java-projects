@@ -267,7 +267,12 @@ public class DeliveryUtil {
 		// updating vehicle fleet after assiging package to vehicle
 		if (null != vehicleOption.get() && null != vehicleOption.get().getValue()) {
 			DeliveryVehicle vehicleReadyToFlagOff = vehicleOption.get().getValue();
-			vehicleReadyToFlagOff.setDeliveryPackages(listOfPckgRdyForDlvry);
+			
+			if(null != vehicleReadyToFlagOff.getDeliveryPackages()) {
+				vehicleReadyToFlagOff.getDeliveryPackages().addAll(listOfPckgRdyForDlvry);
+			} else {
+				vehicleReadyToFlagOff.setDeliveryPackages(listOfPckgRdyForDlvry);
+			}
 			vehicleReadyToFlagOff.setNextAvailableInHrs(totalTimeOfDeliveryOfPckg);
 			VehicleUtil.setVehiclesInTransit(vehicleReadyToFlagOff);
 			availableVehicleFleets.remove(vehicleReadyToFlagOff.getVId());
