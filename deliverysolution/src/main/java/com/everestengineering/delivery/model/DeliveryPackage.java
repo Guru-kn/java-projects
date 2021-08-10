@@ -3,7 +3,6 @@ package com.everestengineering.delivery.model;
 import com.everestengineering.discount.model.DiscountCoupon;
 import com.everestengineering.discount.model.DiscountResponse;
 import com.everestengineering.discount.util.DiscountUtil;
-import com.google.gson.annotations.Expose;
 
 import lombok.Data;
 

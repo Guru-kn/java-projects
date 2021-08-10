@@ -3,9 +3,6 @@ package com.everestengineering.discount.util;
 import org.apache.log4j.Logger;
 
 import com.everestengineering.discount.constant.CostConstants;
-import com.everestengineering.discount.model.DiscountResponse;
-import com.everestengineering.discount.service.DiscountService;
-import com.google.gson.Gson;
 
 public class CostUtil {
 

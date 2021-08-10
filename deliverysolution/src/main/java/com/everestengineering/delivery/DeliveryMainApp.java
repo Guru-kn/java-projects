@@ -3,7 +3,6 @@ package com.everestengineering.delivery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -34,8 +33,7 @@ public class DeliveryMainApp {
 				logger.info("Validation failed " + orderResponse.getValidationMessage());
 			}
 			
-			double baseDeliveryCost = DeliveryUtil.getInstance()
-					.getDoubleValueFromStringArr(baseCostToDlivrAndNoOfPckgArr, 0);
+			double baseDeliveryCost = DeliveryUtil.getDoubleValueFromStringArr(baseCostToDlivrAndNoOfPckgArr, 0);
 			int numberOfPackages = Integer.valueOf(baseCostToDlivrAndNoOfPckgArr[1]);
 
 			input = new Scanner(System.in);
@@ -52,8 +50,7 @@ public class DeliveryMainApp {
 			
 			if(null != deliveredPackageDetails &&
 					!deliveredPackageDetails.isEmpty()) {
-				deliveredPackages = DeliveryUtil.getInstance().
-						deliveryPackageListToExpectedFormat(deliveredPackageDetails);
+				deliveredPackages = DeliveryUtil.deliveryPackageListToExpectedFormat(deliveredPackageDetails);
 				logger.info(deliveredPackages);
 			} else {
 				logger.info("None of the packages has valid information to deliver, please check the packages again ");

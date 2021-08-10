@@ -2,15 +2,9 @@ package com.everestengineering.delivery.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -18,13 +12,6 @@ import org.apache.log4j.Logger;
 import com.everestengineering.delivery.constant.DeliveryConstant;
 import com.everestengineering.delivery.model.DeliveryPackage;
 import com.everestengineering.delivery.model.PackageResponse;
-import com.everestengineering.discount.constant.ValidationConstant;
-import com.everestengineering.discount.model.DeliveryVehicle;
-import com.everestengineering.discount.model.DiscountResponse;
-import com.everestengineering.discount.model.OrderResponse;
-import com.everestengineering.discount.service.CostService;
-import com.everestengineering.discount.util.ValidationUtil;
-import com.google.gson.Gson;
 
 public class DeliveryUtil {
 
@@ -33,18 +20,6 @@ public class DeliveryUtil {
 	private DeliveryUtil() {
 
 	}
-
-	public static DeliveryUtil deliveryUtil = null;
-
-	static {
-		if (deliveryUtil == null)
-			deliveryUtil = new DeliveryUtil();
-	}
-
-	public static DeliveryUtil getInstance() {
-		return deliveryUtil;
-	}
-
 
 	public static PackageResponse findHeavierPackages(Integer[] packageWeights, int arrLength, int maxNumOfEleToSumWith) {
 		int[] indexesUsedToAdd = new int[packageWeights.length];
@@ -104,7 +79,7 @@ public class DeliveryUtil {
 		return bd.doubleValue();
 	}
 
-	public double getDoubleValueFromStringArr(String[] arr, int index) {
+	public static double getDoubleValueFromStringArr(String[] arr, int index) {
 		return Double.valueOf(arr[index]);
 	}
 	
@@ -122,7 +97,7 @@ public class DeliveryUtil {
 		return dlPckgIds;
 	}
 	
-	public List<String> deliveryPackageListToExpectedFormat(List<DeliveryPackage> deliveryPackageList){
+	public static List<String> deliveryPackageListToExpectedFormat(List<DeliveryPackage> deliveryPackageList){
 		
 		List<String> deliveredPckgs = deliveryPackageList.stream()
 				.map(pckg -> 

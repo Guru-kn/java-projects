@@ -12,7 +12,6 @@ import com.everestengineering.delivery.model.DeliveryPackage;
 import com.everestengineering.delivery.model.PackageResponse;
 import com.everestengineering.delivery.service.DeliveryService;
 import com.everestengineering.delivery.util.DeliveryUtil;
-import com.google.gson.Gson;
 
 public class DeliveryServiceTest {
 	
@@ -126,7 +125,7 @@ public class DeliveryServiceTest {
 		expectedRes2.add("PKG4 105.0 1395.0 0.85");
 		expectedRes2.add("PKG5 0.0 2125.0 4.19");
 		
-		List<String> actualRes2 = DeliveryUtil.getInstance().deliveryPackageListToExpectedFormat(deliveryPackageList2);
+		List<String> actualRes2 = DeliveryUtil.deliveryPackageListToExpectedFormat(deliveryPackageList2);
 		
 		assertEquals(list2.size(), actualRes2.size());
 		assertEquals(expectedRes2, actualRes2);
