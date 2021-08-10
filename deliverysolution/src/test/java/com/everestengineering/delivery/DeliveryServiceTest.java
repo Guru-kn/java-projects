@@ -21,9 +21,10 @@ public class DeliveryServiceTest {
 	public void testMaxWeightIndexCalculation() {
 		
 		Integer[] packageWeights = {50, 75, 110, 155, 175};
+		Integer[] packageDistance = {50, 15, 5, 10, 25};
 		
 		PackageResponse packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 2);
+				packageWeights.length, 2, packageDistance);
 		
 		int[] expected = {2, 1};
 		for(int i=0; i< expected.length; i++) {
@@ -32,9 +33,10 @@ public class DeliveryServiceTest {
 		assertEquals(185, packageResponse.getMaxWeight());
 		
 		packageWeights = new Integer[]{50, 75, 150};
+		packageDistance = new Integer[]{50, 15, 5, 10, 25};
 		
 		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 2);
+				packageWeights.length, 2, packageDistance);
 		
 		expected = new int[]{0, 2};
 		for(int i=0; i< expected.length; i++) {
@@ -43,9 +45,10 @@ public class DeliveryServiceTest {
 		assertEquals(200, packageResponse.getMaxWeight());
 		
 		packageWeights = new Integer[]{50, 50, 150};
+		packageDistance = new Integer[]{50, 15, 5, 10, 25};
 		
 		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 2);
+				packageWeights.length, 2, packageDistance);
 		
 		expected = new int[]{2, 1};
 		for(int i=0; i< expected.length; i++) {
@@ -54,9 +57,10 @@ public class DeliveryServiceTest {
 		assertEquals(200, packageResponse.getMaxWeight());
 		
 		packageWeights = new Integer[]{50, 175};
+		packageDistance = new Integer[]{50, 15, 5, 10, 25};
 		
 		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 1);
+				packageWeights.length, 1, packageDistance);
 		
 		expected = new int[]{1};
 		for(int i=0; i< expected.length; i++) {
@@ -65,9 +69,10 @@ public class DeliveryServiceTest {
 		assertEquals(175, packageResponse.getMaxWeight());
 		
 		packageWeights = new Integer[]{50, 75, 150, 175};
+		packageDistance = new Integer[]{50, 15, 5, 10, 25};
 		
 		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 2);
+				packageWeights.length, 2, packageDistance);
 		
 		expected = new int[]{0, 2};
 		for(int i=0; i< expected.length; i++) {
@@ -76,9 +81,10 @@ public class DeliveryServiceTest {
 		assertEquals(200, packageResponse.getMaxWeight());
 		
 		packageWeights = new Integer[]{50, 75, 150, 200};
+		packageDistance = new Integer[]{50, 15, 5, 10, 25};
 		
 		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 1);
+				packageWeights.length, 1, packageDistance);
 		
 		expected = new int[]{1};
 		for(int i=0; i< expected.length; i++) {

@@ -40,8 +40,8 @@ public class DiscountService {
 			DiscountCoupon discountCoupon = discountCoupons.get(couponCode);
 			DiscountCriteria discountCriteria = discountCoupon.getDiscountCriteria();
 
-			logger.info("Coupon code is found " + couponCode + ", will check if its valid or not");
-			logger.info("Coupon details " + new Gson().toJson(discountCriteria));
+			logger.debug("Coupon code is found " + couponCode + ", will check if its valid or not");
+			logger.debug("Coupon details " + new Gson().toJson(discountCriteria));
 
 			if (null == discountCriteria) {
 				discountResponse.setCriteriaMessage("Invalid coupon code");

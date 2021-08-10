@@ -49,7 +49,7 @@ public class DiscountUtil {
 		if (discountResponse.isCouponApplied()) {
 			double discountInAmount = calculateDiscountBasedOnPercentageOrAmount(discountCriteria, baseDeliveryCost);
 			discountResponse.setTotalDiscountInAmount(Double.valueOf(discountInAmount));
-			logger.info("Total discount applied is " + Double.valueOf(discountInAmount));
+			logger.debug("Total discount applied is " + Double.valueOf(discountInAmount));
 			return discountResponse;
 		} else {
 			String discCriteriaMsg = getDiscountCriteriaMessage(couponCode, discountCriteria, distanceToDestination,
@@ -57,7 +57,7 @@ public class DiscountUtil {
 					discountResponse.isWeightCriteria());
 			discountResponse.setCriteriaMessage(discCriteriaMsg);
 			
-			logger.info(discCriteriaMsg);
+			logger.debug(discCriteriaMsg);
 		}
 		
 		return discountResponse;

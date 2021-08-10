@@ -11,7 +11,4 @@ Setup instructions:
    PKG1 5 5 OFR001
    PKG2 15 5 OFR002
    PKG3 10 100 OFR003
-7. I am logging output as:
-    PKG1 0.0 175.0
-    PKG2 0.0 275.0
-    PKG3 35.0 665.0
+7. Output calculation will not be mentioned as it will be as per the problem statement

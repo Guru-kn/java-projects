@@ -21,7 +21,8 @@ public class DeliveryUtil {
 
 	}
 
-	public static PackageResponse findHeavierPackages(Integer[] packageWeights, int arrLength, int maxNumOfEleToSumWith) {
+	public static PackageResponse findHeavierPackages(Integer[] packageWeights, int arrLength,
+			int maxNumOfEleToSumWith, Integer[] packageDistance) {
 		int[] indexesUsedToAdd = new int[packageWeights.length];
 		Arrays.fill(indexesUsedToAdd, -1);
 
@@ -64,11 +65,22 @@ public class DeliveryUtil {
 		}
 		
 		indexesUsedToAdd = Arrays.stream(indexesUsedToAdd).filter(x -> x >= 0).toArray();
+		
+		int weight=0;
+		double totalDistance = 0;
+		for(int x: indexesUsedToAdd) {
+			weight = weight + packageWeights[x];
+			totalDistance = totalDistance + packageDistance[x];
+		}
+		
+		if(weight <= 200) {
+			PackageResponse packageResponse = new 
+					PackageResponse(maxWeight, indexesUsedToAdd, indexesUsedToAdd.length, totalDistance);
 
-		PackageResponse packageResponse = new 
-				PackageResponse(maxWeight, indexesUsedToAdd, indexesUsedToAdd.length);
-
-		return packageResponse;
+			return packageResponse;
+		} else {
+			return null;
+		}
 	}
 
 	public static double calculateDeliveryTime(double distance) {

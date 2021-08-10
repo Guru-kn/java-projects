@@ -70,7 +70,7 @@ public class DeliveryService {
 				}
 			}
 
-			logger.info("delivered packages details " + new Gson().toJson(deliveredPackages));
+			logger.debug("delivered packages details " + new Gson().toJson(deliveredPackages));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -90,8 +90,8 @@ public class DeliveryService {
 			
 			// packages wont be added to fleet if details has some issue
 			if(!orderResponse.isValid()) {
-				logger.info("Validation failed " + orderResponse.getValidationMessage());
-				logger.info("----------------------------END OF O/P---------------------------------------");
+				logger.debug("Validation failed " + orderResponse.getValidationMessage());
+				logger.debug("----------------------------END OF O/P---------------------------------------");
 				continue;
 			}
 
@@ -111,12 +111,6 @@ public class DeliveryService {
 				.filter(o -> o.getMaxWeight().equals(packageWithMaxSumAndIndexOfMaxSumList.get(0).getMaxWeight()))
 				.collect(Collectors.toList());
 
-		if (finalListWithMaxWeights.size() > 1) {
-
-			// compare all the packages distance and then choose the package with nearest
-			// distance
-		}
-
 		return finalListWithMaxWeights;
 	}
 	
@@ -131,8 +125,6 @@ public class DeliveryService {
                 .stream()
                 .sorted((Map.Entry.<String, Double>comparingByValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-		
-		System.out.println("sortedByCount " + sortedByCount);
 		
 		Map<String, DeliveryVehicle> newMap = vehiclesInTransit.entrySet()
 		.stream()
@@ -151,12 +143,12 @@ public class DeliveryService {
 		DeliveryVehicle vehicleAvlbleForDelivery = null;
 		
 		if(availableVehicleFleets.size() == 0) {
-			logger.info("There are no available vehicles, need to check the next available from fleet");
+			logger.debug("There are no available vehicles, need to check the next available from fleet");
 			availableVehicleFleets = getNextAvailableVehicleInTransit(VehicleUtil.getVehiclesInTransit());
 		}
 		
 		vehicleAvlbleForDelivery = availableVehicleFleets.entrySet().iterator().next().getValue();
-		logger.info("Next available vehicle in the fleet is " +
+		logger.debug("Next available vehicle in the fleet is " +
 				availableVehicleFleets.entrySet().iterator().next().getValue().getVId() + " after " +
 				vehicleAvlbleForDelivery.getNextAvailableInHrs() + " hrs");
 
@@ -223,22 +215,33 @@ public class DeliveryService {
 
 		Integer[] packageWeights = masterDeliveryPackageList.stream().map(am -> am.getWeightInKg().intValue())
 				.toArray(Integer[]::new);
+		
+		Integer[] packageDistance = masterDeliveryPackageList.stream().map(am -> am.getDistanceInKms().intValue())
+				.toArray(Integer[]::new);
 
 		PackageResponse packageResponse = null;
 		List<PackageResponse> packageWithMaxSumAndIndexOfMaxSumList = new ArrayList<PackageResponse>();
 		List<PackageResponse> packagesToBeDelivered = null;
 		
 		for (int i = 0; i < packageWeights.length; i++) {
-			packageResponse = DeliveryUtil.findHeavierPackages(packageWeights, packageWeights.length, i);
+			packageResponse = DeliveryUtil.findHeavierPackages(packageWeights, packageWeights.length, i, packageDistance);
 			
-			System.out.println("after findHeavierPackages " + new Gson().toJson(packageResponse));
+			if(i == 3) {
+				System.out.println("after findHeavierPackages " + new Gson().toJson(packageResponse));
+			}
 			
-			packageWithMaxSumAndIndexOfMaxSumList.add(packageResponse);
+			if(null != packageResponse) {
+				packageWithMaxSumAndIndexOfMaxSumList.add(packageResponse);
+			}
 		}
 		
 		//Sort pckgs with max weight first
-		Collections.sort(packageWithMaxSumAndIndexOfMaxSumList, Comparator.comparing(PackageResponse::getMaxWeight)
-				.reversed().thenComparing(PackageResponse::getNumberOfPackages));
+		Collections.sort(packageWithMaxSumAndIndexOfMaxSumList, 
+				Comparator.comparing(PackageResponse::getNumberOfPackages)
+				.reversed().thenComparing(PackageResponse::getMaxWeight).reversed()
+				.thenComparing(PackageResponse::getTotalDistance));
+		
+		System.out.println("packageWithMaxSumAndIndexOfMaxSumList " + packageWithMaxSumAndIndexOfMaxSumList);
 
 		packagesToBeDelivered = checkAndSelectSuitablePackageToAssign(packageWithMaxSumAndIndexOfMaxSumList);
 
@@ -268,9 +271,9 @@ public class DeliveryService {
 			listOfDeliveredPckgIds.addAll(DeliveryUtil.addPackageIdsToList(deliveryVehicle.getDeliveryPackages(), listOfDeliveredPckgIds));
 		}
 		
-		logger.info("Vehicle delivery details " + new Gson().toJson(assignedVehicleWithPackages));
+		logger.debug("Vehicle delivery details " + new Gson().toJson(assignedVehicleWithPackages));
 		
-		logger.info("-----------------------END-OF-O/P---------------------------");
+		logger.debug("-----------------------END-OF-O/P---------------------------");
 		
 		return deliveredPackages;
 	}
