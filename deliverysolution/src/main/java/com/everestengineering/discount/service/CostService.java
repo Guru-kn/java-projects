@@ -35,7 +35,7 @@ public class CostService {
 	        int index = 0;
 	        for(String packageDetails: pkgIdPkgWeightInKgDistInKmOffCode) {
 	        	
-	        	orderResponse = ValidationUtil.getInstance().
+	        	orderResponse = ValidationUtil.
 		        		validatePackageIdWeightInKgDistInKmAndOffCode(packageDetails,
 		        				orderResponse);
 		        

@@ -85,7 +85,7 @@ public class DeliveryService {
 		DeliveryPackage deliveryPackage = null;
 		for (String pckage : packageList) {
 			
-			OrderResponse orderResponse = ValidationUtil.getInstance().
+			OrderResponse orderResponse = ValidationUtil.
 			validatePackageIdWeightInKgDistInKmAndOffCode(pckage, new OrderResponse());
 			
 			// packages wont be added to fleet if details has some issue

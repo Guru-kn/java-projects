@@ -28,7 +28,7 @@ public class DiscountMainApp {
 			input = new Scanner(System.in);
 			String baseCostOfDeliveryAndNoOfPckgs = input.nextLine();
 			
-			OrderResponse orderResponse = ValidationUtil.getInstance().
+			OrderResponse orderResponse = ValidationUtil.
 					validateBaseDeliveryCostAndNoOfPackages(baseCostOfDeliveryAndNoOfPckgs, new OrderResponse());
 			
 			if(!orderResponse.isValid()) {

@@ -7,19 +7,11 @@ import com.everestengineering.discount.model.OrderResponse;
 
 public class ValidationUtil {
 
-	public static ValidationUtil validationUtil = null;
-
-	static {
-		if (validationUtil == null)
-			validationUtil = new ValidationUtil();
+	private ValidationUtil() {
+		
 	}
 
-	public static ValidationUtil getInstance() {
-
-		return validationUtil;
-	}
-
-	public OrderResponse validateBaseDeliveryCostAndNoOfPackages(String baseDlvryCostNoOfPackages,
+	public static OrderResponse validateBaseDeliveryCostAndNoOfPackages(String baseDlvryCostNoOfPackages,
 			OrderResponse orderResponse) {
 
 		String[] baseDlvryCostNoOfPackagesArr = null;
@@ -47,7 +39,7 @@ public class ValidationUtil {
 		return orderResponse;
 	}
 
-	public OrderResponse validatePackageIdWeightInKgDistInKmAndOffCode(String pkgIdPkgWeightInKgDistInKmOffCode,
+	public static OrderResponse validatePackageIdWeightInKgDistInKmAndOffCode(String pkgIdPkgWeightInKgDistInKmOffCode,
 			OrderResponse orderResponse) {
 
 		try {
@@ -92,7 +84,7 @@ public class ValidationUtil {
 		return orderResponse;
 	}
 
-	public OrderResponse validateParseDouble(String strToParse, String parameterName, OrderResponse orderResponse) {
+	public static OrderResponse validateParseDouble(String strToParse, String parameterName, OrderResponse orderResponse) {
 		try {
 			double val = Double.valueOf(strToParse);
 			
@@ -114,7 +106,7 @@ public class ValidationUtil {
 		return orderResponse;
 	}
 
-	public OrderResponse validateString(String strToValidate, String parameterName, OrderResponse orderResponse) {
+	public static OrderResponse validateString(String strToValidate, String parameterName, OrderResponse orderResponse) {
 		if (null == strToValidate || strToValidate.trim().length() == 0) {
 			orderResponse.setValid(false);
 			orderResponse.setValidationMessage("Entered " + parameterName + " is null or empty");

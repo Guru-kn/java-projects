@@ -40,7 +40,7 @@ public class DiscountResponse {
 		this.totalDiscountInAmount = totalDiscountInAmount;
 		this.totalWeight = totalWeight;
 		this.totalDistance = totalDistance;
-		this.criteriaMessage = DiscountUtil.getInstance().getDiscountCriteriaMessage(couponCode, discountCriteria, totalDistance,
+		this.criteriaMessage = DiscountUtil.getDiscountCriteriaMessage(couponCode, discountCriteria, totalDistance,
 				totalWeight, distanceCriteria, weightCriteria);
 	}
 }

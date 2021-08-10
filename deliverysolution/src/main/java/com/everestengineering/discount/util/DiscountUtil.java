@@ -17,26 +17,12 @@ import com.everestengineering.discount.model.DiscountResponse;
 
 public class DiscountUtil {
 
-	Logger logger = Logger.getLogger(DiscountUtil.class);
+	static Logger logger = Logger.getLogger(DiscountUtil.class);
 
 	private static Map<String, DiscountCoupon> discountCoupons;
 
 	private DiscountUtil() {
 		
-	}
-	
-	public static DiscountUtil discountUtil = null;
-
-	static {
-		if (discountUtil == null)
-			discountUtil = new DiscountUtil();
-	}
-
-	public static DiscountUtil getInstance() {
-		if(null == discountCoupons) {
-			addDiscountCoupons(); // this needs to either in cache or driven from DB
-		}
-		return discountUtil;
 	}
 	
 	public static Map<String, DiscountCoupon> getDiscountCoupons() {
@@ -77,7 +63,7 @@ public class DiscountUtil {
 		DiscountUtil.discountCoupons = discountCoupons;
 	}
 
-	public DiscountResponse calculateRangeDiscount(String couponCode, double baseDeliveryCost, double totalWeight,
+	public static DiscountResponse calculateRangeDiscount(String couponCode, double baseDeliveryCost, double totalWeight,
 			double distanceToDestination, DiscountCriteria discountCriteria,
 			DiscountResponse discountResponse){
 
@@ -101,11 +87,11 @@ public class DiscountUtil {
 		return discountResponse;
 	}
 
-	public DiscountResponse calculateFlatDiscount(DiscountResponse discountResponse) {
+	public static DiscountResponse calculateFlatDiscount(DiscountResponse discountResponse) {
 		return discountResponse;
 	}
 
-	public DiscountResponse checkIfCriteriaMatches(DiscountCriteria discountCriteria,
+	public static DiscountResponse checkIfCriteriaMatches(DiscountCriteria discountCriteria,
 			double distance, double weight, DiscountResponse discountResponse) {
 
 		switch (discountCriteria.getRangeMeasure()) {
@@ -134,7 +120,7 @@ public class DiscountUtil {
 		return discountResponse;
 	}
 
-	public double calculateDiscountBasedOnPercentageOrAmount(DiscountCriteria discountCriteria, double totalBaseCost) {
+	public static double calculateDiscountBasedOnPercentageOrAmount(DiscountCriteria discountCriteria, double totalBaseCost) {
 
 		switch (discountCriteria.getDiscountMeasure()) {
 
@@ -151,7 +137,7 @@ public class DiscountUtil {
 
 	}
 
-	public String getDiscountCriteriaMessage(String couponCode, DiscountCriteria discountCriteria,
+	public static String getDiscountCriteriaMessage(String couponCode, DiscountCriteria discountCriteria,
 			double totaDistance,
 			double totalWeight,boolean distanceCriteria, boolean weightCriteria) {
 		StringBuilder builder = new StringBuilder();

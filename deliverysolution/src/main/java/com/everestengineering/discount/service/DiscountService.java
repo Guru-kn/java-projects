@@ -22,7 +22,6 @@ public class DiscountService {
 	}
 
 	public static DiscountService getInstance() {
-		DiscountUtil.getInstance();
 		return discountService;
 	}
 	
@@ -55,11 +54,11 @@ public class DiscountService {
 
 			switch (discountCriteria.getDiscountType()) {
 			case RANGE:
-				return DiscountUtil.getInstance().calculateRangeDiscount(couponCode, totalDeliveryCost,
+				return DiscountUtil.calculateRangeDiscount(couponCode, totalDeliveryCost,
 						totalWeight, distanceToDestination,
 						discountCriteria, discountResponse);
 			case FLAT:
-				return DiscountUtil.getInstance().calculateFlatDiscount(discountResponse);
+				return DiscountUtil.calculateFlatDiscount(discountResponse);
 			default:
 				return discountResponse;
 			}

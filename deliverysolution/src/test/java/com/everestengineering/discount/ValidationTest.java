@@ -16,11 +16,11 @@ public class ValidationTest {
 	@Test
 	public void testForValidWeightAndDistance() {
 
-		OrderResponse orderResponse = ValidationUtil.getInstance().validateParseDouble("15", CostConstants.WEIGHT_IN_KG,
+		OrderResponse orderResponse = ValidationUtil.validateParseDouble("15", CostConstants.WEIGHT_IN_KG,
 				new OrderResponse());
 		assertEquals(true, orderResponse.isValid());
 
-		orderResponse = ValidationUtil.getInstance().validateParseDouble("15r34wr3", CostConstants.WEIGHT_IN_KG,
+		orderResponse = ValidationUtil.validateParseDouble("15r34wr3", CostConstants.WEIGHT_IN_KG,
 				new OrderResponse());
 		assertEquals(false, orderResponse.isValid());
 	}
@@ -28,15 +28,15 @@ public class ValidationTest {
 	@Test
 	public void testToValidateBaseDeliveryCostAndNoOfPackages() {
 
-		OrderResponse orderResponse = ValidationUtil.getInstance().validateBaseDeliveryCostAndNoOfPackages("100 3",
+		OrderResponse orderResponse = ValidationUtil.validateBaseDeliveryCostAndNoOfPackages("100 3",
 				new OrderResponse());
 		assertEquals(true, orderResponse.isValid());
 
-		orderResponse = ValidationUtil.getInstance().validateBaseDeliveryCostAndNoOfPackages("100rwe 3",
+		orderResponse = ValidationUtil.validateBaseDeliveryCostAndNoOfPackages("100rwe 3",
 				new OrderResponse());
 		assertEquals(false, orderResponse.isValid());
 
-		orderResponse = ValidationUtil.getInstance().validateBaseDeliveryCostAndNoOfPackages("100 3rfwe",
+		orderResponse = ValidationUtil.validateBaseDeliveryCostAndNoOfPackages("100 3rfwe",
 				new OrderResponse());
 		assertEquals(false, orderResponse.isValid());
 	}
@@ -44,15 +44,15 @@ public class ValidationTest {
 	@Test
 	public void testToValidatePackageIdWeightInKgDistInKmAndOffCode() {
 
-		OrderResponse orderResponse = ValidationUtil.getInstance().
+		OrderResponse orderResponse = ValidationUtil.
 				validatePackageIdWeightInKgDistInKmAndOffCode("PKG1 5 5 OFR001", new OrderResponse());
 		assertEquals(true, orderResponse.isValid());
 
-		orderResponse = ValidationUtil.getInstance().validatePackageIdWeightInKgDistInKmAndOffCode("PKG1 5 5 ",
+		orderResponse = ValidationUtil.validatePackageIdWeightInKgDistInKmAndOffCode("PKG1 5 5 ",
 				new OrderResponse());
 		assertEquals(false, orderResponse.isValid());
 
-		orderResponse = ValidationUtil.getInstance().validatePackageIdWeightInKgDistInKmAndOffCode("",
+		orderResponse = ValidationUtil.validatePackageIdWeightInKgDistInKmAndOffCode("",
 				new OrderResponse());
 		assertEquals(false, orderResponse.isValid());
 	}

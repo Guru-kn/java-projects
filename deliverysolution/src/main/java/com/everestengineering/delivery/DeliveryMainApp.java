@@ -26,7 +26,7 @@ public class DeliveryMainApp {
 			
 			String[] baseCostToDlivrAndNoOfPckgArr = baseCostOfDeliveryAndNoOfPckgs.split(" ");
 			
-			OrderResponse orderResponse = ValidationUtil.getInstance().
+			OrderResponse orderResponse = ValidationUtil.
 					validateBaseDeliveryCostAndNoOfPackages(baseCostOfDeliveryAndNoOfPckgs, new OrderResponse());
 			
 			if(!orderResponse.isValid()) {
