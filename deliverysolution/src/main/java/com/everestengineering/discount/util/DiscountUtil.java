@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.everestengineering.delivery.util.ExcelUtil;
 import com.everestengineering.discount.constant.DiscountConstant.CouponNames;
 import com.everestengineering.discount.constant.DiscountConstant.DiscountMeasure;
 import com.everestengineering.discount.constant.DiscountConstant.DiscountType;
@@ -36,30 +37,7 @@ public class DiscountUtil {
 	// more coupons can be added
 	public static void addDiscountCoupons() {
 
-		Map<String, DiscountCoupon> discountCoupons = new HashMap<String, DiscountCoupon>();
-
-		// constructor values for discountCriteria
-		// discountType, discountMeasure, rangeMeasure, discountValue,fromWeight,
-		// toWeight, fromDistance, toDistance
-
-		DiscountCriteria discountCriteria = new DiscountCriteria(DiscountType.RANGE, DiscountMeasure.PERCENTAGE,
-				RangeMeasure.BOTH, 10, 70, 200, 1, 200, null);
-		DiscountCoupon coupon = new DiscountCoupon(CouponNames.OFR001.toString(), discountCriteria);
-		discountCriteria.setCouponCode(coupon.getCouponCode());
-		discountCoupons.put(CouponNames.OFR001.toString(), coupon);
-
-		discountCriteria = new DiscountCriteria(DiscountType.RANGE, DiscountMeasure.PERCENTAGE, RangeMeasure.BOTH, 7,
-				100, 250, 50, 150, null);
-		coupon = new DiscountCoupon(CouponNames.OFR002.toString(), discountCriteria);
-		discountCriteria.setCouponCode(coupon.getCouponCode());
-		discountCoupons.put(CouponNames.OFR002.toString(), coupon);
-
-		discountCriteria = new DiscountCriteria(DiscountType.RANGE, DiscountMeasure.PERCENTAGE, RangeMeasure.BOTH, 5,
-				10, 150, 50, 250, null);
-		coupon = new DiscountCoupon(CouponNames.OFR003.toString(), discountCriteria);
-		discountCriteria.setCouponCode(coupon.getCouponCode());
-		discountCoupons.put(CouponNames.OFR003.toString(), coupon);
-		
+		Map<String, DiscountCoupon> discountCoupons = ExcelUtil.readFromExcelFileAndLoadDiscounts();
 		DiscountUtil.discountCoupons = discountCoupons;
 	}
 

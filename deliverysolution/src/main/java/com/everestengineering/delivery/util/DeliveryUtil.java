@@ -83,6 +83,10 @@ public class DeliveryUtil {
 		return Double.valueOf(arr[index]);
 	}
 	
+	public static double getDoubleValueFromString(String str) {
+		return Double.valueOf(str);
+	}
+	
 	public static Double getDoubleValueRoundedToTwo(Double val) {
 		
 		return new BigDecimal(val).setScale(2, RoundingMode.HALF_UP).doubleValue();
