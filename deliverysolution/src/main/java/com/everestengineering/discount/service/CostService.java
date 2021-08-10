@@ -1,7 +1,5 @@
 package com.everestengineering.discount.service;
 
-import java.util.Scanner;
-
 import org.apache.log4j.Logger;
 
 import com.everestengineering.discount.model.DiscountResponse;
@@ -25,52 +23,23 @@ public class CostService {
 		return costService;
 	}
 	
-	public String[] calculateTotalCostOfDelivery(String baseDlvryCostNoOfPackages) {
-		
-		// input format
-		// base_delivery_cost no_of_packges
-		// pkg_id1 pkg_weight1_in_kg distance1_in_km offer_code1
+	public String[] calculateTotalCostOfDelivery(double baseDeliveryCost, String[] pkgIdPkgWeightInKgDistInKmOffCode) {
 
-		// O/P: pkg_id1 discount1 total_cost1
-
-		// String pkgIdPkgWeightInKgDistInKmOffCode = "PKG1 5 5 OFR001";
-		
-		OrderResponse orderResponse = ValidationUtil.getInstance().validateBaseDeliveryCostAndNoOfPackages(baseDlvryCostNoOfPackages, new OrderResponse());
-		
-		if(!orderResponse.isValid()) {
-			logger.info("Validation failed " + orderResponse.getValidationMessage());
-			return null;
-		}
-
-		String[] baseDlvryCostNoOfPackagesArr = baseDlvryCostNoOfPackages.split(" ");
-		Scanner input = null;
-		String[] pkgIdPkgWeightInKgDistInKmOffCode = null;
 		String[] packageOutputWithDiscountAndCost = null;
+		OrderResponse orderResponse = null;
 		
 		try {
-			double baseDeliveryCost = Double.valueOf(baseDlvryCostNoOfPackagesArr[0]);
-			int numberOfPackages = Integer.valueOf(baseDlvryCostNoOfPackagesArr[1]);
-			
-			pkgIdPkgWeightInKgDistInKmOffCode = new String[numberOfPackages];
-			
-			input = new Scanner(System.in);
-			logger.info("Enter the details of " + numberOfPackages + " packages now");
-
-	        for (int i = 0 ; i < pkgIdPkgWeightInKgDistInKmOffCode.length; i++ ) {
-	        	pkgIdPkgWeightInKgDistInKmOffCode[i] = input.nextLine();
-	        }
 	        
-	        packageOutputWithDiscountAndCost = new String[numberOfPackages];
+	        packageOutputWithDiscountAndCost = new String[pkgIdPkgWeightInKgDistInKmOffCode.length];
 	        
+	        int index = 0;
 	        for(String packageDetails: pkgIdPkgWeightInKgDistInKmOffCode) {
-	        	
-	        	int index = 0;
 	        	
 	        	orderResponse = ValidationUtil.getInstance().
 		        		validatePackageIdWeightInKgDistInKmAndOffCode(packageDetails,
 		        				orderResponse);
 		        
-		        System.out.println(new Gson().toJson(orderResponse));
+		        logger.info(new Gson().toJson(orderResponse));
 				
 				if (!orderResponse.isValid()) {
 					logger.info("Validation failed " + orderResponse.getValidationMessage());
@@ -112,7 +81,7 @@ public class CostService {
 		    		logger.info(pacakgeDetailWithDiscountAndCost);
 		    		
 		    		packageOutputWithDiscountAndCost[index] = pacakgeDetailWithDiscountAndCost;
-		    		
+		    		index++;
 		    		logger.info("----------------------------END OF O/P---------------------------------------");
 				}
 	        }
@@ -123,15 +92,7 @@ public class CostService {
 		}catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-		finally {
-			if(input != null) {
-				try {
-					input.close();
-				}catch (Exception e) {
-					logger.error(e.getMessage());
-				}
-			}
-		}
+		
 		return packageOutputWithDiscountAndCost;
 	}
 }
