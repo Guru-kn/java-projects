@@ -36,9 +36,7 @@ public class DiscountUtil {
 	// has to be driven from DB, but hardcoding for now 3 coupons,
 	// more coupons can be added
 	public static void addDiscountCoupons() {
-
-		Map<String, DiscountCoupon> discountCoupons = ExcelUtil.readFromExcelFileAndLoadDiscounts();
-		DiscountUtil.discountCoupons = discountCoupons;
+		DiscountUtil.discountCoupons = ExcelUtil.readFromExcelFileAndLoadDiscounts();
 	}
 
 	public static DiscountResponse calculateRangeDiscount(String couponCode, double baseDeliveryCost, double totalWeight,
