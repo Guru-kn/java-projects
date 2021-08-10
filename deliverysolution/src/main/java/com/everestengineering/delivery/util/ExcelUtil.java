@@ -1,5 +1,6 @@
 package com.everestengineering.delivery.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +24,11 @@ public class ExcelUtil {
 		
 		Map<String, DiscountCoupon> discountCoupons = null;
 		
+		XSSFWorkbook workbook = null;
+
+		// Get first/desired sheet from the workbook
+		XSSFSheet sheet = null;
+		
 		try {
 			ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 			InputStream file = classloader.getResourceAsStream("discountcoupons.xlsx");
@@ -30,10 +36,10 @@ public class ExcelUtil {
 			discountCoupons = new HashMap<String, DiscountCoupon>();
 
 			// Create Workbook instance holding reference to .xlsx file
-			XSSFWorkbook workbook = new XSSFWorkbook(file);
+			workbook = new XSSFWorkbook(file);
 
 			// Get first/desired sheet from the workbook
-			XSSFSheet sheet = workbook.getSheetAt(0);
+			sheet = workbook.getSheetAt(0);
 
 			// Iterate through each rows one by one
 			Iterator<Row> rowIterator = sheet.iterator();
@@ -66,6 +72,13 @@ public class ExcelUtil {
 			file.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if(null != workbook)
+				workbook.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return discountCoupons;

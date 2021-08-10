@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.junit.jupiter.api.Test;
@@ -19,77 +21,93 @@ public class DeliveryServiceTest {
 	Logger logger = Logger.getLogger(DeliveryServiceTest.class);
 	
 	@Test
-	public void testMaxWeightIndexCalculation() {
+	public void testAllCombos() {
 		
-		Integer[] packageWeights = {50, 75, 110, 155, 175};
-		Integer[] packageDistance = {50, 15, 5, 10, 25};
+
 		
-		PackageResponse packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 2, packageDistance);
+		List<DeliveryPackage> pckgs = new ArrayList<DeliveryPackage>();
+		List<String> listOfPackageToDeliver = new ArrayList<String>();
 		
-		int[] expected = {2, 1};
-		for(int i=0; i< expected.length; i++) {
-			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
-		}
-		assertEquals(185, packageResponse.getMaxWeight());
+		int target = 200;
 		
-		packageWeights = new Integer[]{50, 75, 150};
-		packageDistance = new Integer[]{50, 15, 5};
+		listOfPackageToDeliver.add("PKG1 50 65 OFR002");
+		listOfPackageToDeliver.add("PKG2 75 100 OFR003");
+		listOfPackageToDeliver.add("PKG3 150 50 OFR001");
+		listOfPackageToDeliver.add("PKG4 200 50 OFR001");
 		
-		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 2, packageDistance);
+		pckgs = DeliveryService.getInstance().
+				readPackageDetails(listOfPackageToDeliver, 100d);
 		
-		expected = new int[]{0, 2};
-		for(int i=0; i< expected.length; i++) {
-			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
-		}
-		assertEquals(200, packageResponse.getMaxWeight());
+		List<String> allCombos = new ArrayList<String>();
 		
-		packageWeights = new Integer[]{50, 50, 150};
-		packageDistance = new Integer[]{50, 15, 5};
+		Map<String, DeliveryPackage> mapOfPkgIdWithDeliveryPackage = new TreeMap<String, DeliveryPackage>();
 		
-		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 2, packageDistance);
+		DeliveryUtil.findAllCombos(pckgs, target, new ArrayList<DeliveryPackage>(), allCombos, mapOfPkgIdWithDeliveryPackage);
+		String bestCombination = DeliveryUtil.sortAndGetBestPackageCombo(allCombos, mapOfPkgIdWithDeliveryPackage);
 		
-		expected = new int[]{2, 1};
-		for(int i=0; i< expected.length; i++) {
-			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
-		}
-		assertEquals(200, packageResponse.getMaxWeight());
+		assertEquals("200.0_115.0_PKG1_PKG3", bestCombination);
 		
-		packageWeights = new Integer[]{50, 175};
-		packageDistance = new Integer[]{50, 15};
+		pckgs = new ArrayList<DeliveryPackage>();
+		listOfPackageToDeliver = new ArrayList<String>();
 		
-		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 1, packageDistance);
+		listOfPackageToDeliver.add("PKG5 25 65 OFR002");
+		listOfPackageToDeliver.add("PKG3 50 100 OFR003");
+		listOfPackageToDeliver.add("PKG1 75 50 OFR001");
+		listOfPackageToDeliver.add("PKG2 75 15 OFR002");
+		listOfPackageToDeliver.add("PKG6 75 10 OFR002");
+		listOfPackageToDeliver.add("PKG4 100 50 OFR002");
 		
-		expected = new int[]{1};
-		for(int i=0; i< expected.length; i++) {
-			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
-		}
-		assertEquals(175, packageResponse.getMaxWeight());
+		pckgs = DeliveryService.getInstance().
+				readPackageDetails(listOfPackageToDeliver, 100d);
 		
-		packageWeights = new Integer[]{50, 75, 150, 175};
-		packageDistance = new Integer[]{50, 15, 5, 10};
+		allCombos = new ArrayList<String>();
 		
-		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 2, packageDistance);
+		mapOfPkgIdWithDeliveryPackage = new TreeMap<String, DeliveryPackage>();
 		
-		expected = new int[]{0, 2};
-		for(int i=0; i< expected.length; i++) {
-			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
-		}
-		assertEquals(200, packageResponse.getMaxWeight());
+		DeliveryUtil.findAllCombos(pckgs, target, new ArrayList<DeliveryPackage>(), allCombos, mapOfPkgIdWithDeliveryPackage);
+		bestCombination = DeliveryUtil.sortAndGetBestPackageCombo(allCombos, mapOfPkgIdWithDeliveryPackage);
 		
-		packageWeights = new Integer[]{50, 75, 150, 200};
-		packageDistance = new Integer[]{50, 15, 5, 10};
+		assertEquals("200.0_125.0_PKG3_PKG2_PKG6", bestCombination);
 		
-		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
-				packageWeights.length, 1, packageDistance);
+		pckgs = new ArrayList<DeliveryPackage>();
+		listOfPackageToDeliver = new ArrayList<String>();
 		
-		System.out.println(new Gson().toJson(packageResponse));
+		listOfPackageToDeliver.add("PKG2 50 65 OFR002");
+		listOfPackageToDeliver.add("PKG3 150 100 OFR003");
+		listOfPackageToDeliver.add("PKG1 200 50 OFR001");
 		
-		assertEquals(null, packageResponse);
+		pckgs = DeliveryService.getInstance().
+				readPackageDetails(listOfPackageToDeliver, 100d);
+		
+		allCombos = new ArrayList<String>();
+		
+		mapOfPkgIdWithDeliveryPackage = new TreeMap<String, DeliveryPackage>();
+		
+		DeliveryUtil.findAllCombos(pckgs, target, new ArrayList<DeliveryPackage>(), allCombos, mapOfPkgIdWithDeliveryPackage);
+		bestCombination = DeliveryUtil.sortAndGetBestPackageCombo(allCombos, mapOfPkgIdWithDeliveryPackage);
+		
+		assertEquals("200.0_165.0_PKG2_PKG3", bestCombination);
+		
+		pckgs = new ArrayList<DeliveryPackage>();
+		listOfPackageToDeliver = new ArrayList<String>();
+		
+		listOfPackageToDeliver.add("PKG2 50 65 OFR002");
+		listOfPackageToDeliver.add("PKG3 75 100 OFR003");
+		listOfPackageToDeliver.add("PKG1 175 50 OFR001");
+		listOfPackageToDeliver.add("PKG4 110 50 OFR001");
+		listOfPackageToDeliver.add("PKG5 155 50 OFR001");
+		
+		pckgs = DeliveryService.getInstance().
+				readPackageDetails(listOfPackageToDeliver, 100d);
+		
+		allCombos = new ArrayList<String>();
+		
+		mapOfPkgIdWithDeliveryPackage = new TreeMap<String, DeliveryPackage>();
+		
+		DeliveryUtil.findAllCombos(pckgs, target, new ArrayList<DeliveryPackage>(), allCombos, mapOfPkgIdWithDeliveryPackage);
+		bestCombination = DeliveryUtil.sortAndGetBestPackageCombo(allCombos, mapOfPkgIdWithDeliveryPackage);
+		
+		assertEquals("185.0_150.0_PKG3_PKG4", bestCombination);
 	}
 
 	@Test

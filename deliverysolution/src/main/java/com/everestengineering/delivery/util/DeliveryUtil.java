@@ -137,7 +137,7 @@ public class DeliveryUtil {
 		}
 	}
 
-	public static List<DeliveryPackage> sortAndGetBestPackageCombo(List<String> allCombos,
+	public static String sortAndGetBestPackageCombo(List<String> allCombos,
 			Map<String, DeliveryPackage> mapOfPkgIdWithDeliveryPackage) {
 		// sort packages based on weight and distance
 		Collections.sort(allCombos, new Comparator<String>() {
@@ -155,14 +155,39 @@ public class DeliveryUtil {
 		List<String> finalCombo = new ArrayList<String>(allCombos);
 
 		List<String> finalListWithMaxPckMinDist = finalCombo.stream()
-				.filter(o -> o.split("_")[0].equals(finalCombo.get(0).split("_")[0])).collect(Collectors.toList());
-		
-		System.out.println("allCombos " + allCombos);
+				.filter(o -> o.split("_")[0].equals(finalCombo.get(0).split("_")[0]))
+				.filter(o -> o.split("_").length == finalCombo.get(0).split("_").length)
+				.collect(Collectors.toList());
 		
 		String bestCombination = finalListWithMaxPckMinDist.get(finalListWithMaxPckMinDist.size() - 1);
 		
-		logger.info("Best combination found to deliver is " + bestCombination);
+		logger.debug("Best combination found to deliver is " + bestCombination);
 		
+		return bestCombination;
+		
+//		String[] bestCombArr = bestCombination.split("_");
+//		
+//		int count = 0;
+//		List<DeliveryPackage> finalListOfPckRdyForDlvr = new ArrayList<DeliveryPackage>();
+//		for(String bestPkgId: bestCombArr) {
+//			if(count == 0 || count == 1) {
+//				count++;
+//				continue;
+//			}
+//			
+//			DeliveryPackage dlvryPckg = mapOfPkgIdWithDeliveryPackage.get(bestPkgId);
+//			
+//			if(null != dlvryPckg) {
+//				dlvryPckg = setCostAndDiscountToPckgDelivery(dlvryPckg);
+//				finalListOfPckRdyForDlvr.add(mapOfPkgIdWithDeliveryPackage.get(bestPkgId));
+//			}
+//		}
+//		
+//		return finalListOfPckRdyForDlvr;
+	}
+	
+	public static List<DeliveryPackage>  getDeliveryPckgFromBestCombination(String bestCombination,
+			Map<String, DeliveryPackage> mapOfPkgIdWithDeliveryPackage){
 		String[] bestCombArr = bestCombination.split("_");
 		
 		int count = 0;
@@ -317,5 +342,10 @@ public class DeliveryUtil {
 				.collect(Collectors.toList());
 		Collections.sort(deliveredPckgs);
 		return deliveredPckgs;
+	}
+	
+	public static List<String> getPckIdsFromList(List<DeliveryPackage> deliveryPckgs) {
+		List<String> dlPckgIds = deliveryPckgs.stream().map(DeliveryPackage::getPackageId).collect(Collectors.toList());
+		return dlPckgIds;
 	}
 }

@@ -2,16 +2,11 @@ package com.everestengineering.discount.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.everestengineering.delivery.util.ExcelUtil;
-import com.everestengineering.discount.constant.DiscountConstant.CouponNames;
-import com.everestengineering.discount.constant.DiscountConstant.DiscountMeasure;
-import com.everestengineering.discount.constant.DiscountConstant.DiscountType;
-import com.everestengineering.discount.constant.DiscountConstant.RangeMeasure;
 import com.everestengineering.discount.model.DiscountCoupon;
 import com.everestengineering.discount.model.DiscountCriteria;
 import com.everestengineering.discount.model.DiscountResponse;
