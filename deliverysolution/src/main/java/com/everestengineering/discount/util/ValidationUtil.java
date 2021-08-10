@@ -1,5 +1,6 @@
 package com.everestengineering.discount.util;
 
+import com.everestengineering.delivery.constant.VehicleConstant;
 import com.everestengineering.discount.constant.CostConstants;
 import com.everestengineering.discount.constant.DiscountConstant;
 import com.everestengineering.discount.constant.ValidationConstant;
@@ -29,6 +30,43 @@ public class ValidationUtil {
 				if (orderResponse.isValid()) {
 					orderResponse = validateParseDouble(baseDlvryCostNoOfPackagesArr[1],
 							CostConstants.NUMBER_OF_PACKAGES, orderResponse);
+				}
+			}
+		} catch (Exception e) {
+			orderResponse.setValid(false);
+			orderResponse.setValidationMessage(ValidationConstant.INVALID_INPUT);
+		}
+
+		return orderResponse;
+	}
+	
+	public static OrderResponse validateVehicleDetails(String vehicleDetails,
+			OrderResponse orderResponse) {
+
+		String[] vehicleDetailsArr = null;
+		try {
+			vehicleDetailsArr = vehicleDetails.split(" ");
+			if (vehicleDetailsArr.length == 0) {
+				orderResponse.setValid(false);
+				orderResponse.setValidationMessage(
+						"Enter the vehicle details in this format `no_of_vehicles max_speed max_carriable_weight`");
+			} else {
+
+				orderResponse = validateParseInt(vehicleDetailsArr[0], VehicleConstant.NUMBER_OF_VEHICLES,
+						orderResponse);
+
+				if (orderResponse.isValid()) {
+					orderResponse = validateParseDouble(vehicleDetailsArr[1],
+							VehicleConstant.MAX_SPEED_OF_VEHICLE, orderResponse);
+				} else {
+					return orderResponse;
+				}
+				
+				if (orderResponse.isValid()) {
+					orderResponse = validateParseDouble(vehicleDetailsArr[1],
+							VehicleConstant.MAX_WEIGHT_VEHICLE_CARRY, orderResponse);
+				} else {
+					return orderResponse;
 				}
 			}
 		} catch (Exception e) {
@@ -87,6 +125,28 @@ public class ValidationUtil {
 	public static OrderResponse validateParseDouble(String strToParse, String parameterName, OrderResponse orderResponse) {
 		try {
 			double val = Double.valueOf(strToParse);
+			
+			if(val > 0) {
+				orderResponse.setValid(true);
+				orderResponse.setValidationMessage(parameterName + " Validated");
+			} else {
+				orderResponse.setValid(false);
+				orderResponse.setValidationMessage("Entered " + parameterName + " should be a greater than 0");
+			}
+		} catch (NumberFormatException e) {
+			orderResponse.setValid(false);
+			orderResponse.setValidationMessage("Entered " + parameterName + " should be a number");
+		} catch (Exception e) {
+			orderResponse.setValid(false);
+			orderResponse.setValidationMessage(ValidationConstant.INVALID_INPUT);
+		}
+
+		return orderResponse;
+	}
+	
+	public static OrderResponse validateParseInt(String strToParse, String parameterName, OrderResponse orderResponse) {
+		try {
+			int val = Integer.valueOf(strToParse);
 			
 			if(val > 0) {
 				orderResponse.setValid(true);

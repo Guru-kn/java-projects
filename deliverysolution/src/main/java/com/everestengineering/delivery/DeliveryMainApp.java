@@ -9,8 +9,10 @@ import org.apache.log4j.Logger;
 import com.everestengineering.delivery.model.DeliveryPackage;
 import com.everestengineering.delivery.service.DeliveryService;
 import com.everestengineering.delivery.util.DeliveryUtil;
+import com.everestengineering.delivery.util.VehicleUtil;
 import com.everestengineering.discount.model.OrderResponse;
 import com.everestengineering.discount.util.ValidationUtil;
+import com.google.gson.Gson;
 
 public class DeliveryMainApp {
 	
@@ -44,7 +46,21 @@ public class DeliveryMainApp {
 				packageListToDeliver.add(input.nextLine());
 			}
 			
-			List<String> deliveredPackages = new ArrayList<String>();
+			input = new Scanner(System.in);
+			logger.info("Enter the details of vehicle in format no_of_vehicles max_speed max_carriable_weight ");
+			
+			String vehicleDetails = input.nextLine();
+			orderResponse = ValidationUtil.validateVehicleDetails(vehicleDetails, orderResponse);
+			
+			if(!orderResponse.isValid()) {
+				logger.info("Validation failed " + orderResponse.getValidationMessage());
+			}
+			
+			VehicleUtil.addDeliveryVehicles(vehicleDetails);
+			
+			System.out.println(new Gson().toJson(VehicleUtil.getVehicleFleets()));
+			
+			List<String> deliveredPackages = null;
 			List<DeliveryPackage>  deliveredPackageDetails = DeliveryService.getInstance().
 					sendPackagesToDeliver(baseDeliveryCost, packageListToDeliver);
 			

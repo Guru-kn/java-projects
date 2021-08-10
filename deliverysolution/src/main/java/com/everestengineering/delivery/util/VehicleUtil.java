@@ -13,25 +13,23 @@ public class VehicleUtil {
 	private static Map<String, DeliveryVehicle> availableVehicleFleets;
 	private static Map<String, DeliveryVehicle> vehiclesInTransit;
 	
+	public static int noOfVehicles = 2;
+	public static Double maxSpeed = 70d;
+	public static Double maxCarriableWeight = 200d;
+	
 	private VehicleUtil() {
 		
 	}
-	
-	public static VehicleUtil vehicleUtil = null;
 
-	static {
-		if (vehicleUtil == null)
-			vehicleUtil = new VehicleUtil();
-	}
-
-	public static VehicleUtil getInstance() {
-		if(null == vehicleFleets) {
-			addDeliveryVehicles(); // this needs to either in cache or driven from DB
+	public static void addDeliveryVehicles(String vehicleDetails) {
+		
+		String[] vehicleDetailsArr = null;
+		if(null != vehicleDetails) {
+			vehicleDetailsArr = vehicleDetails.split(" ");
+			noOfVehicles = Integer.parseInt(vehicleDetailsArr[0]);
+			maxSpeed = Double.parseDouble(vehicleDetailsArr[1]);
+			maxCarriableWeight = Double.parseDouble(vehicleDetailsArr[2]);
 		}
-		return vehicleUtil;
-	}
-
-	private static void addDeliveryVehicles() {
 		
 		if(vehicleFleets == null) {
 			vehicleFleets = new HashMap<String, DeliveryVehicle>();
@@ -41,13 +39,20 @@ public class VehicleUtil {
 			availableVehicleFleets = new HashMap<String, DeliveryVehicle>();
 		}
 		
-		DeliveryVehicle deliveryVehicle = new DeliveryVehicle(
-				VehicleConstant.VehicleIds.VEHICLE01.toString(),true,0d);
-		vehicleFleets.put(VehicleConstant.VehicleIds.VEHICLE01.toString(), deliveryVehicle);
+		for(int i=0; i < noOfVehicles; i++) {
+			DeliveryVehicle deliveryVehicle = new DeliveryVehicle(
+					VehicleConstant.VehicleIds.VEHICLE01.toString(),true,0d);
+			String vehicleId = VehicleConstant.VehicleIds.VEHICLE + (i < 10 ? "0" : "") + (i+1); 
+			vehicleFleets.put(vehicleId, deliveryVehicle);
+		}
 		
-		deliveryVehicle = new DeliveryVehicle(
-				VehicleConstant.VehicleIds.VEHICLE02.toString(),true,0d);
-		vehicleFleets.put(VehicleConstant.VehicleIds.VEHICLE02.toString(), deliveryVehicle);
+//		DeliveryVehicle deliveryVehicle = new DeliveryVehicle(
+//				VehicleConstant.VehicleIds.VEHICLE01.toString(),true,0d);
+//		vehicleFleets.put(VehicleConstant.VehicleIds.VEHICLE01.toString(), deliveryVehicle);
+//		
+//		deliveryVehicle = new DeliveryVehicle(
+//				VehicleConstant.VehicleIds.VEHICLE02.toString(),true,0d);
+//		vehicleFleets.put(VehicleConstant.VehicleIds.VEHICLE02.toString(), deliveryVehicle);
 		
 		availableVehicleFleets = vehicleFleets.entrySet()
                 .stream()
@@ -56,16 +61,10 @@ public class VehicleUtil {
 	}
 	
 	public static Map<String, DeliveryVehicle> getVehicleFleets() {
-		if(null == vehicleFleets) {
-			addDeliveryVehicles(); // this needs to either in cache or driven from DB
-		}
 		return vehicleFleets;
 	}
 	
 	public static Map<String, DeliveryVehicle> getAvailableVehicleFleets() {
-		if(null == vehicleFleets) {
-			addDeliveryVehicles(); // this needs to either in cache or driven from DB
-		}
 		return availableVehicleFleets;
 	}
 	

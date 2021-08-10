@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -15,12 +13,8 @@ import com.everestengineering.delivery.model.DeliveryPackage;
 import com.everestengineering.delivery.model.PackageResponse;
 import com.everestengineering.delivery.util.DeliveryUtil;
 import com.everestengineering.delivery.util.PackageWeightComparator;
-import com.everestengineering.delivery.util.VehicleUtil;
-import com.everestengineering.discount.constant.ValidationConstant;
 import com.everestengineering.discount.model.DeliveryVehicle;
-import com.everestengineering.discount.model.DiscountResponse;
 import com.everestengineering.discount.model.OrderResponse;
-import com.everestengineering.discount.service.CostService;
 import com.everestengineering.discount.util.ValidationUtil;
 import com.google.gson.Gson;
 

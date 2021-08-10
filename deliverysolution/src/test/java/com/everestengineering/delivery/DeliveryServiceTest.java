@@ -11,10 +11,9 @@ import org.apache.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import com.everestengineering.delivery.model.DeliveryPackage;
-import com.everestengineering.delivery.model.PackageResponse;
 import com.everestengineering.delivery.service.DeliveryService;
 import com.everestengineering.delivery.util.DeliveryUtil;
-import com.google.gson.Gson;
+import com.everestengineering.delivery.util.VehicleUtil;
 
 public class DeliveryServiceTest {
 	
@@ -28,7 +27,7 @@ public class DeliveryServiceTest {
 		List<DeliveryPackage> pckgs = new ArrayList<DeliveryPackage>();
 		List<String> listOfPackageToDeliver = new ArrayList<String>();
 		
-		int target = 200;
+		int target = VehicleUtil.maxCarriableWeight.intValue();
 		
 		listOfPackageToDeliver.add("PKG1 50 65 OFR002");
 		listOfPackageToDeliver.add("PKG2 75 100 OFR003");
@@ -137,6 +136,8 @@ public class DeliveryServiceTest {
 		list2.add("PKG3 175 100 OFR003");
 		list2.add("PKG4 110 60 OFR002");
 		list2.add("PKG5 155 95 NA");
+		
+		VehicleUtil.addDeliveryVehicles("2 70 200");
 		
 		List<DeliveryPackage> deliveryPackageList2 = DeliveryService.getInstance().
 				sendPackagesToDeliver(100, list2);

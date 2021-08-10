@@ -3,26 +3,23 @@ package com.everestengineering.delivery.util;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
 import com.everestengineering.delivery.constant.DeliveryConstant;
 import com.everestengineering.delivery.model.DeliveryPackage;
-import com.everestengineering.delivery.model.PackageResponse;
 import com.everestengineering.discount.constant.ValidationConstant;
 import com.everestengineering.discount.model.DeliveryVehicle;
 import com.everestengineering.discount.model.DiscountResponse;
 import com.everestengineering.discount.service.CostService;
-import com.google.gson.Gson;
 
 public class DeliveryUtil {
 
@@ -30,75 +27,6 @@ public class DeliveryUtil {
 
 	private DeliveryUtil() {
 
-	}
-
-	public static PackageResponse findHeavierPackages(Integer[] packageWeights, int arrLength, int maxNumOfEleToSumWith,
-			Integer[] packageDistance) {
-		int[] indexesUsedToAdd = new int[packageWeights.length];
-		Arrays.fill(indexesUsedToAdd, -1);
-
-		// k must be greater
-		if (arrLength < maxNumOfEleToSumWith) {
-			PackageResponse packageResponse = new PackageResponse();
-			packageResponse.setIndexOfMaxSum(Arrays.stream(indexesUsedToAdd).filter(x -> x >= 0).toArray());
-			packageResponse.setMaxWeight(0);
-			return packageResponse;
-		}
-
-		int maxWeight = 0;
-
-		int lastIndexAdded = -1;
-		for (int i = 0; i < maxNumOfEleToSumWith; i++) {
-			if (maxWeight >= DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS
-					|| (maxWeight + packageWeights[i] > DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS)) {
-				break;
-			}
-			maxWeight += packageWeights[i];
-			indexesUsedToAdd[i] = i;
-			lastIndexAdded = i;
-		}
-
-		int currSum = maxWeight;
-		for (int i = maxNumOfEleToSumWith; i < arrLength; i++) {
-			if (maxWeight < DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS && ((currSum + packageWeights[i]
-					- packageWeights[i - maxNumOfEleToSumWith]) <= DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS)) {
-				currSum += packageWeights[i] - packageWeights[i - maxNumOfEleToSumWith];
-
-				System.out.println("currSum " + currSum);
-
-				indexesUsedToAdd[i - maxNumOfEleToSumWith] = i;
-			} else if (maxWeight < DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS && (currSum - packageWeights[lastIndexAdded]
-					+ packageWeights[i] <= DeliveryConstant.MAX_WEIGHT_LOAD_IN_KGS)) {
-				currSum = currSum - packageWeights[lastIndexAdded] + packageWeights[i];
-				lastIndexAdded = i;
-				indexesUsedToAdd[i] = i;
-				indexesUsedToAdd[maxNumOfEleToSumWith - 1] = -1;
-			}
-
-			maxWeight = Math.max(maxWeight, currSum);
-		}
-
-		indexesUsedToAdd = Arrays.stream(indexesUsedToAdd).filter(x -> x >= 0).toArray();
-
-		int weight = 0;
-		double totalDistance = 0;
-		for (int x : indexesUsedToAdd) {
-			System.out.println("index used to add " + x);
-			weight = weight + packageWeights[x];
-			totalDistance = totalDistance + packageDistance[x];
-		}
-
-		System.out.println("packageWeights " + new Gson().toJson(packageWeights));
-		System.out.println("Total weight " + weight);
-
-		if (weight <= 200) {
-			PackageResponse packageResponse = new PackageResponse(maxWeight, indexesUsedToAdd, indexesUsedToAdd.length,
-					totalDistance);
-
-			return packageResponse;
-		} else {
-			return null;
-		}
 	}
 
 	public static void findAllCombos(List<DeliveryPackage> pckgs, int target,
@@ -307,7 +235,9 @@ public class DeliveryUtil {
 
 	public static double calculateDeliveryTime(double distance) {
 
-		Double timeInHrs = distance / DeliveryConstant.MAX_SPEED_PER_HR_IN_KMS;
+		System.out.println("VehicleUtil.maxSpeed " + VehicleUtil.maxSpeed);
+		
+		Double timeInHrs = distance / VehicleUtil.maxSpeed;
 		BigDecimal bd = BigDecimal.valueOf(timeInHrs);
 		bd = bd.setScale(2, RoundingMode.FLOOR);
 		return bd.doubleValue();
