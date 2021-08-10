@@ -54,7 +54,7 @@ public class DiscountMainApp {
 					pkgIdPkgWeightInKgDistInKmOffCode);
 			logger.info("----------Final O/P---------- ");
 			for(String op: packageOutputWithDiscountAndCost) {
-				System.out.print(op + " ");
+				System.out.println(op);
 			}
 			
 		}catch (Exception e) {

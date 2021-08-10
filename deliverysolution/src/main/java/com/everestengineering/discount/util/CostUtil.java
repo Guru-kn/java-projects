@@ -28,19 +28,4 @@ public class CostUtil {
 				+ (distanceToDestination * CostConstants.COST_PER_KM);
 		return totalCost;
 	}
-	
-	public DiscountResponse calculateFinalDeliveryCost(double baseDeliveryCost,
-			double weightInKg, double distanceInKms, String offerCode) {
-		double baseTotalCost = CostUtil.getInstance().calculateTotalCost(baseDeliveryCost, weightInKg, distanceInKms);
-
-		DiscountResponse discountResponse = DiscountService.getInstance().calculateDiscountByCouponCode(offerCode, baseTotalCost,
-				weightInKg, distanceInKms);
-		
-		logger.info(new Gson().toJson(discountResponse));
-		
-		double finalDeliveryCost = discountResponse.getTotalCost() - discountResponse.getTotalDiscountInAmount();
-		discountResponse.setFinalDeliveryCost(finalDeliveryCost);
-		
-		return discountResponse;
-	}
 }
