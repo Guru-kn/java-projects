@@ -12,6 +12,7 @@ import com.everestengineering.delivery.model.DeliveryPackage;
 import com.everestengineering.delivery.model.PackageResponse;
 import com.everestengineering.delivery.service.DeliveryService;
 import com.everestengineering.delivery.util.DeliveryUtil;
+import com.google.gson.Gson;
 
 public class DeliveryServiceTest {
 	
@@ -33,7 +34,7 @@ public class DeliveryServiceTest {
 		assertEquals(185, packageResponse.getMaxWeight());
 		
 		packageWeights = new Integer[]{50, 75, 150};
-		packageDistance = new Integer[]{50, 15, 5, 10, 25};
+		packageDistance = new Integer[]{50, 15, 5};
 		
 		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
 				packageWeights.length, 2, packageDistance);
@@ -45,7 +46,7 @@ public class DeliveryServiceTest {
 		assertEquals(200, packageResponse.getMaxWeight());
 		
 		packageWeights = new Integer[]{50, 50, 150};
-		packageDistance = new Integer[]{50, 15, 5, 10, 25};
+		packageDistance = new Integer[]{50, 15, 5};
 		
 		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
 				packageWeights.length, 2, packageDistance);
@@ -57,7 +58,7 @@ public class DeliveryServiceTest {
 		assertEquals(200, packageResponse.getMaxWeight());
 		
 		packageWeights = new Integer[]{50, 175};
-		packageDistance = new Integer[]{50, 15, 5, 10, 25};
+		packageDistance = new Integer[]{50, 15};
 		
 		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
 				packageWeights.length, 1, packageDistance);
@@ -69,7 +70,7 @@ public class DeliveryServiceTest {
 		assertEquals(175, packageResponse.getMaxWeight());
 		
 		packageWeights = new Integer[]{50, 75, 150, 175};
-		packageDistance = new Integer[]{50, 15, 5, 10, 25};
+		packageDistance = new Integer[]{50, 15, 5, 10};
 		
 		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
 				packageWeights.length, 2, packageDistance);
@@ -81,16 +82,14 @@ public class DeliveryServiceTest {
 		assertEquals(200, packageResponse.getMaxWeight());
 		
 		packageWeights = new Integer[]{50, 75, 150, 200};
-		packageDistance = new Integer[]{50, 15, 5, 10, 25};
+		packageDistance = new Integer[]{50, 15, 5, 10};
 		
 		packageResponse = DeliveryUtil.findHeavierPackages(packageWeights,
 				packageWeights.length, 1, packageDistance);
 		
-		expected = new int[]{1};
-		for(int i=0; i< expected.length; i++) {
-			assertEquals(expected[i], packageResponse.getIndexOfMaxSum()[i]);
-		}
-		assertEquals(200, packageResponse.getMaxWeight());
+		System.out.println(new Gson().toJson(packageResponse));
+		
+		assertEquals(null, packageResponse);
 	}
 
 	@Test

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -72,6 +73,7 @@ public class DeliveryService {
 
 			logger.debug("delivered packages details " + new Gson().toJson(deliveredPackages));
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
 		
@@ -114,28 +116,10 @@ public class DeliveryService {
 		return finalListWithMaxWeights;
 	}
 	
-	public static Map<String, DeliveryVehicle> getNextAvailableVehicleInTransit(Map<String, DeliveryVehicle> vehiclesInTransit) {
-		
-		Map<String, Double> mapOfVhcleAndNxtAvalbleTime = vehiclesInTransit.entrySet()
-		        .stream()
-		        .collect(Collectors.toMap(Map.Entry::getKey,
-		                                  e -> new Double(e.getValue().getNextAvailableInHrs())));
-		
-		Map<String, Double> sortedByCount = mapOfVhcleAndNxtAvalbleTime.entrySet()
-                .stream()
-                .sorted((Map.Entry.<String, Double>comparingByValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-		
-		Map<String, DeliveryVehicle> newMap = vehiclesInTransit.entrySet()
-		.stream()
-		.filter(x -> x.getKey().equals(sortedByCount.entrySet().iterator().next().getKey()))
-		.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-		
-		return newMap;
-	}
+	
 
 	
-	public Map<String, DeliveryVehicle> assignPackagetoVehicle(
+	public Map<String, DeliveryVehicle> assignPackagetoVehicleOld(
 			PackageResponse packageWithMaxSumAndIndexOfMaxSumList, List<DeliveryPackage> masterPackageList) {
 
 		// get available vehicle fleets
@@ -144,7 +128,7 @@ public class DeliveryService {
 		
 		if(availableVehicleFleets.size() == 0) {
 			logger.debug("There are no available vehicles, need to check the next available from fleet");
-			availableVehicleFleets = getNextAvailableVehicleInTransit(VehicleUtil.getVehiclesInTransit());
+			availableVehicleFleets = DeliveryUtil.getNextAvailableVehicleInTransit(VehicleUtil.getVehiclesInTransit());
 		}
 		
 		vehicleAvlbleForDelivery = availableVehicleFleets.entrySet().iterator().next().getValue();
@@ -211,7 +195,7 @@ public class DeliveryService {
 		return VehicleUtil.getVehiclesInTransit();
 	}
 	
-	public List<DeliveryPackage> checkPackageDetailsAndAssignToAvailableVehicle(List<DeliveryPackage> masterDeliveryPackageList, List<DeliveryPackage> deliveredPackages, List<String> listOfDeliveredPckgIds) {
+	public List<DeliveryPackage> checkPackageDetailsAndAssignToAvailableVehicleOld(List<DeliveryPackage> masterDeliveryPackageList, List<DeliveryPackage> deliveredPackages, List<String> listOfDeliveredPckgIds) {
 
 		Integer[] packageWeights = masterDeliveryPackageList.stream().map(am -> am.getWeightInKg().intValue())
 				.toArray(Integer[]::new);
@@ -245,7 +229,53 @@ public class DeliveryService {
 
 		packagesToBeDelivered = checkAndSelectSuitablePackageToAssign(packageWithMaxSumAndIndexOfMaxSumList);
 
-		Map<String, DeliveryVehicle> assignedVehicleWithPackages = assignPackagetoVehicle(packagesToBeDelivered.get(0),
+		Map<String, DeliveryVehicle> assignedVehicleWithPackages = assignPackagetoVehicleOld(packagesToBeDelivered.get(0),
+				masterDeliveryPackageList);
+		
+		// add delivery package to final delivery list
+		DeliveryVehicle deliveryVehicle = null;
+		if(deliveredPackages.size() > 0) {
+			
+			for(Map.Entry<String, DeliveryVehicle> entry: assignedVehicleWithPackages.entrySet()) {
+				
+				List<DeliveryPackage> dlvryPckgListInVehicle = entry.getValue().getDeliveryPackages();
+				List<DeliveryPackage> newDlvryList = dlvryPckgListInVehicle
+				.stream()
+				.filter(pckg -> !listOfDeliveredPckgIds.contains(pckg.getPackageId()))
+				.collect(Collectors.toList());
+				
+				if(!newDlvryList.isEmpty()) {
+					deliveredPackages.addAll(newDlvryList);
+					listOfDeliveredPckgIds.addAll(DeliveryUtil.addPackageIdsToList(newDlvryList, listOfDeliveredPckgIds));
+				}
+			}
+		} else {
+			deliveryVehicle = assignedVehicleWithPackages.entrySet().stream().findFirst().get().getValue();
+			deliveredPackages.addAll(deliveryVehicle.getDeliveryPackages());
+			listOfDeliveredPckgIds.addAll(DeliveryUtil.addPackageIdsToList(deliveryVehicle.getDeliveryPackages(), listOfDeliveredPckgIds));
+		}
+		
+		logger.debug("Vehicle delivery details " + new Gson().toJson(assignedVehicleWithPackages));
+		
+		logger.debug("-----------------------END-OF-O/P---------------------------");
+		
+		return deliveredPackages;
+	}
+	
+	public List<DeliveryPackage> checkPackageDetailsAndAssignToAvailableVehicle(List<DeliveryPackage> masterDeliveryPackageList,
+			List<DeliveryPackage> deliveredPackages, List<String> listOfDeliveredPckgIds) {
+		
+		Map<String, DeliveryPackage> mapOfPkgIdWithDeliveryPackage = new TreeMap<String, DeliveryPackage>();
+		
+		List<String> allCombos = new ArrayList<String>();
+		DeliveryUtil.findAllCombos(masterDeliveryPackageList, 200,
+				new ArrayList<DeliveryPackage>(),
+				allCombos, mapOfPkgIdWithDeliveryPackage);
+		
+		List<DeliveryPackage> packagesToBeDelivered = DeliveryUtil.sortAndGetBestPackageCombo(allCombos, mapOfPkgIdWithDeliveryPackage);
+		
+		Map<String, DeliveryVehicle> assignedVehicleWithPackages = DeliveryUtil.assignPackagetoVehicle
+				(packagesToBeDelivered,
 				masterDeliveryPackageList);
 		
 		// add delivery package to final delivery list
