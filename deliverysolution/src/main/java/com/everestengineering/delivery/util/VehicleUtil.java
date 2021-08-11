@@ -40,9 +40,9 @@ public class VehicleUtil {
 		}
 		
 		for(int i=0; i < noOfVehicles; i++) {
-			DeliveryVehicle deliveryVehicle = new DeliveryVehicle(
-					VehicleConstant.VehicleIds.VEHICLE01.toString(),true,0d);
 			String vehicleId = VehicleConstant.VehicleIds.VEHICLE + (i < 10 ? "0" : "") + (i+1); 
+			DeliveryVehicle deliveryVehicle = new DeliveryVehicle(
+					vehicleId,true,0d);
 			vehicleFleets.put(vehicleId, deliveryVehicle);
 		}
 		
