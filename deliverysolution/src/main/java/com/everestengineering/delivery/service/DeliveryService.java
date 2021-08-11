@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 
 import com.everestengineering.delivery.model.DeliveryPackage;
-import com.everestengineering.delivery.model.PackageResponse;
 import com.everestengineering.delivery.util.DeliveryUtil;
 import com.everestengineering.delivery.util.PackageWeightComparator;
 import com.everestengineering.discount.model.DeliveryVehicle;
@@ -96,16 +95,6 @@ public class DeliveryService {
 		// 50, 75, 175, 110, 155 -> 50, 75, 110, 155, 175
 		Collections.sort(deliveryPackageList, new PackageWeightComparator());
 		return deliveryPackageList;
-	}
-	
-	public static List<PackageResponse> checkAndSelectSuitablePackageToAssign(
-			List<PackageResponse> packageWithMaxSumAndIndexOfMaxSumList) {
-
-		List<PackageResponse> finalListWithMaxWeights = packageWithMaxSumAndIndexOfMaxSumList.stream()
-				.filter(o -> o.getMaxWeight().equals(packageWithMaxSumAndIndexOfMaxSumList.get(0).getMaxWeight()))
-				.collect(Collectors.toList());
-
-		return finalListWithMaxWeights;
 	}
 	
 	public List<DeliveryPackage> checkPackageDetailsAndAssignToAvailableVehicle(List<DeliveryPackage> masterDeliveryPackageList,

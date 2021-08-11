@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
-import com.everestengineering.delivery.constant.DeliveryConstant;
 import com.everestengineering.delivery.model.DeliveryPackage;
 import com.everestengineering.discount.constant.ValidationConstant;
 import com.everestengineering.discount.model.DeliveryVehicle;

@@ -2,7 +2,6 @@ package com.everestengineering.discount.model;
 
 import java.util.List;
 
-import com.everestengineering.delivery.constant.DeliveryConstant;
 import com.everestengineering.delivery.model.DeliveryPackage;
 import com.everestengineering.delivery.util.VehicleUtil;
 
