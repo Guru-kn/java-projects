@@ -1,0 +1,6 @@
+---
+applications:
+  - name: demoapp
+    buildpacks: 
+      - java_buildpack
+    path: target/demo-1.0.jar
