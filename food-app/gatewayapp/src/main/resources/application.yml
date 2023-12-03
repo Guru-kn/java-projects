@@ -1,0 +1,31 @@
+spring:
+ cloud:
+   gateway:
+     routes:
+       - id: delivery-app
+         uri: lb://DELIVERY-APP
+         predicates:
+           - Path=/delivery/**
+         filters:
+           - AuthenticationFilter
+
+
+       - id: restaurant-app
+         uri: lb://RESTAURANT-APP
+         predicates:
+           - Path=/restaurant/**
+         filters:
+           - AuthenticationFilter
+
+       - id: identity-app
+         uri: lb://IDENTITY-APP
+         predicates:
+           - Path=/auth/**
+
+ application:
+   name: GATEWAY-APP
+
+eureka:
+  client:
+    service-url:
+      defaultZone : http://localhost:8761/eureka/
