@@ -1,0 +1,11 @@
+{
+    "instances": [
+        {
+            "prompt": "get the image of beautiful scenic nature"
+        }
+    ],
+    "parameters": {
+        "sampleCount": 1
+    }
+}
+
