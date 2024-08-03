@@ -1,0 +1,31 @@
+<nb-layout>
+    <nb-layout-header fixed>My AI Lab</nb-layout-header>
+
+    <nb-sidebar>Menu</nb-sidebar>
+
+    <nb-layout-column>
+
+        
+
+        <nb-chat title="My AI Chatbot">
+
+            <!-- <div *ngFor="let msg of messages">
+                <span *nbCustomMessage="'aiReply'" [innerHTML]="latestMessage"></span>
+            </div>
+            
+            <nb-chat-message type="aiReply" *ngFor="let msg of messages" [reply]="msg.reply"
+            [sender]="msg.user.name" [date]="msg.date" [files]="msg.files" [quote]="msg.quote"
+            [latitude]="msg.latitude" [longitude]="msg.longitude" [avatar]="msg.user.avatar"
+            chat-message-reply-background-color="#e41f35"></nb-chat-message> -->
+
+            <nb-chat-message *ngFor="let msg of messages" [type]="msg.type" [message]="msg.text" [reply]="msg.reply"
+                [sender]="msg.user.name" [date]="msg.date" [files]="msg.files" [quote]="msg.quote"
+                [latitude]="msg.latitude" [longitude]="msg.longitude" [avatar]="msg.user.avatar"
+                chat-message-reply-background-color="#e41f35">
+            </nb-chat-message>
+            
+            <nb-chat-form (send)="sendMessage($event)" [dropFiles]="true">
+            </nb-chat-form>
+        </nb-chat>
+    </nb-layout-column>
+</nb-layout>
